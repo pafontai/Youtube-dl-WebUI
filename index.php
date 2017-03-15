@@ -39,7 +39,10 @@
   if(isset($_GET["delete"]))
   {
     $file->delete($_GET["delete"], $_GET["type"]);
-    header("Location: index.php");
+    if ($_GET["type"] == "m")
+      header("Location: index.php?tab=music");
+    else
+      header("Location: index.php?tab=vid");
   }
   
   if(isset($_GET['kill']) && !empty($_GET['kill']) && $_GET['kill'] === "all")
