@@ -2,13 +2,13 @@
 
 class FileHandler
 {
-	private $config = [];
 	private $videos_ext = ".{avi,mp4,flv,webm}";
 	private $musics_ext = ".{mp3,ogg,m4a}";
+        private $config = [];
 
 	public function __construct()
 	{
-		$this->config = require dirname(__DIR__).'/config/config.php';
+          $this->config = $GLOBALS['config'];
 	}
 
 	public function listVideos()
@@ -109,11 +109,17 @@ class FileHandler
 
 	public function get_downloads_folder()
 	{
-                $path =  $this->config["outputFolder"];
-                if(strpos($path , "/") !== 0) 
-                {
-                        $path = dirname(__DIR__).'/' . $path;
-                }
+    $path = $this->config["outputFolder"];
+    if(strpos($path , "/") !== 0) 
+    {
+            $path = dirname(__DIR__).'/' . $path;
+    }
+		return $path;
+	}
+
+	public function get_downloads_link()
+	{
+    $path = $this->config["downloadPath"];
 		return $path;
 	}
 }

@@ -1,14 +1,23 @@
 # Youtube-dl WebUI
-
-![Main](https://github.com/p1rox/Youtube-dl-WebUI/raw/master/img/main.png)
-![List](https://github.com/p1rox/Youtube-dl-WebUI/raw/master/img/list.png)
+![Main](img/main.png)
+![Downloads](img/downloads.png)
 
 ## Description
 Youtube-dl WebUI is a small web interface for youtube-dl. It allows you to host your own video downloader. 
-After the download you can stream your videos from your web browser or save it on your computer directly from the list page.
-It supports simultaneous downloads in background.
+After the download you can stream your videos from your web browser or save them on your computer directly from the list page.
+It supports simultaneous downloads in the background.
 
-### You can now extract the audio of a video and download multiple videos at the same time !
+## Changes from original
+- UI redesign
+- Download status is displayed
+- Audio format can be selected
+- Video quality can be selected (currently only best and smallest)
+- File deletion confirmation dialog
+- Add more config options
+- Removed authentication option
+- Theme can be changed in config.php
+- Default theme is Yeti
+- Add --ignore-error to the youtube-dl command line so that the download of a playlist doesn't stop if one video can't be retrieved
 
 ## Requirements
 - A web server (Apache or nginx)
@@ -19,30 +28,19 @@ It supports simultaneous downloads in background.
 `-x, --extract-audio convert video files to audio-only files (requires ffmpeg or avconv and ffprobe or avprobe)`
 
 ## How to install ?
-1. Clone this repo in your web folder (ex: /var/www).
-2. Edit config.php as you want it to work.
-3. Create the "videos" folder. 
+1. Clone this repo in your web folder (e.g.: /var/www).
+2. Rename config/config.sample.php to config/config.php
+3. Edit config/config.php to your liking
+3. Create the download folder. 
 4. Check permissions.
 5. Load index.php to check that everything works.
 
-## Set a password
-1. Open config/config.php
-2. Set security to true
-3. Find a password, hash it with md5 and replace the value of password.
-
-Example (chosen password is root):
-
-```
-echo -n root|md5sum| sed 's/ .*//'
-# Returns the hash 63a9f0ea7bb98050796b649e85481845
-```
-
 ## CSS Theme
-[Lumen](https://bootswatch.com/lumen/)
+[Bootswatch](https://bootswatch.com/)
 
 ## License
 
-Copyright (c) 2014 Armand VIGNAT
+Copyright (c) 2017 Uli Koeth
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

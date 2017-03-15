@@ -4,9 +4,9 @@ return array(
    * The name of your site. You can specify the name that will be displayed
    * at the top of the website.
    *
-   * 'siteName' => 'Youtube-dl-WebUI'
+   * 'siteName' => 'Youtube-dl WebUI'
    */
-  'siteName' => 'kiot.eu Tube Downloader',
+  'siteName' => 'Youtube-dl WebUI',
   
   /**
    * The bootswatch theme to be used. You can visit https://bootswatch.com/
@@ -18,7 +18,7 @@ return array(
    *
    * 'siteTheme' => 'yeti'
    */
-  'siteTheme' => 'flatly',
+  'siteTheme' => 'yeti',
   
   /**
    * youtube-dl can convert the downloaded videos to audio only.
@@ -38,27 +38,6 @@ return array(
    * 'max-dl' => 3
    */
 	'max_dl' => 3,
-
-  /**
-   * The full absolute path where downloads will be saved to
-   * without trailing slash.
-   * Make sure that the user running your webserver has write
-   * access to this folder
-   * 
-   * e.g.
-   * 'outputFolder' => '/var/www/tubedl/Download'
-   */
-	'outputFolder' => '/share/Download',
-  
-  /**
-   * The web accessible path to you download folder. This has to be a
-   * relative path to the installation of Youtube-dl-webui.
-   * If your download folder is not accessible through the web, leave
-   * this blank and Youtube-dl-webui will not offer download links.
-   *
-   * 'downloadPath' => 'download'
-   */
-  'downloadPath' => 'Download',
    
   /**
    * Specify the tab to redirect to after submitting a download URL.
@@ -67,6 +46,28 @@ return array(
    * 'redirectAfterSubmit' => 'downloading'
    */
   'redirectAfterSubmit' => 'downloading',
+
+  /**
+   * The full absolute path where downloads will be saved to
+   * without trailing slash.
+   * Make sure that the user running your webserver has write
+   * access to this folder
+   * 
+   * e.g.
+   * 'outputFolder' => '/var/www/tubedl/download'
+   */
+	'outputFolder' => '/var/www/tubedl/download',
+  
+  /**
+   * The web accessible path to you download folder. This has to be a
+   * relative path to the installation of Youtube-dl-webui.
+   * If your download folder is not accessible through the web, leave
+   * this blank and Youtube-dl-webui will not offer download links.
+   * This can be useful if you are running the software on a NAS type device.
+   *
+   * 'downloadPath' => 'download'
+   */
+  'downloadPath' => 'download',
   
   /**
    * Specify the directory where youtube should log it's output to.
@@ -78,7 +79,7 @@ return array(
    *
    * 'logPath' => '/var/www/tubedl/tmp'
    */
-  'logPath' => '/share/Web/tubedl/tmp',
+  'logPath' => '/var/www/tubedl/tmp',
   
   /**
    * Specify the command to run youtube-dl. This has to be the full
@@ -89,6 +90,6 @@ return array(
    *
    * 'youtubedlExe' => '/usr/bin/youtube-dl'
    */
-  'youtubedlExe' => '/opt/bin/youtube-dl'
+  'youtubedlExe' => '/usr/bin/youtube-dl'
   );
 ?>
