@@ -36,8 +36,7 @@
               <b>With which sites does it work?</b>
             </td>
             <td>
-              <a href="http://rg3.github.io/youtube-dl/supportedsites.html" targe="_blank">Here's</a> a list of the 
-supported sites
+              <a href="http://rg3.github.io/youtube-dl/supportedsites.html" targe="_blank">Here's</a> a list of the supported sites
             </td>
           </tr>
           <tr>
@@ -45,19 +44,20 @@ supported sites
               <b>How can I download the video/audio to my computer?</b>
             </td>
             <td>
-              Go to <a href="#vidlist" onclick="$('#vid_link').click()" data-toggle="tab" aria-expanded="false">List 
-of videos</a> or <a href="#songlist" 
-onclick="$('#music_link').click()" data-toggle="tab" 
-aria-expanded="false">List of songs</a> >> choose one >> right click on the link >> "Save target as ..." or go to the 
-share \\zz9\Download in your file manager.
+              Go to <a href="#vidlist" onclick="$('#vid_link').click()" data-toggle="tab" aria-expanded="false">List of videos</a> or <a href="#songlist" onclick="$('#music_link').click()" data-toggle="tab" aria-expanded="false">List of songs</a> >> choose one >> right click on the link >> "Save target as ..." or go to the share \\zz9\Download in your file manager.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <b>Where can I get this software?</b>
+            </td>
+            <td>
+              You can download this software for free from <a href="https://github.com/hukoeth/Youtube-dl-WebUI" target="_blank">https://github.com/hukoeth/Youtube-dl-WebUI</a>
             </td>
           </tr>
         </table>
       </div>
     </div>
-
-
-
             </div>
         </footer>
     </body>

@@ -155,7 +155,7 @@
     <li class="<?php echo($tab_home_class); ?>"><a id="home_link" href="#home" data-toggle="tab" aria-expanded="true">Home</a></li>
     <li class="<?php echo($tab_dl_class); ?>"><a id="dl_link" href="#downloading" data-toggle="tab" aria-expanded="false">Downloading</a></li>
     <li class="<?php echo($tab_vid_class); ?>"><a id="vid_link" href="#vidlist" data-toggle="tab" aria-expanded="false">Videos</a></li>
-    <li class="<?php echo($tab_music_class); ?>"><a id="music_link" href="#songlist" data-toggle="tab" aria-expanded="false">Songs</a></li>
+    <li class="<?php echo($tab_music_class); ?>"><a id="music_link" href="#songlist" data-toggle="tab" aria-expanded="false">Music</a></li>
   </ul>
   <div id="myTabContent" class="tab-content">
     <div class="tab-pane fade<?php echo($page_home_class); ?>" id="home">
@@ -256,21 +256,19 @@
     <div class="tab-pane fade<?php echo($page_vid_class); ?>" id="vidlist">
       <br /><br />
       <h4 style="text-align: center;">All Downloaded Videos</h4>
+      <table style="text-align: left;" class="table table-striped table-hover ">
+        <thead>
+          <tr>
+            <th style="min-width:800px; height:35px">Title</th>
+            <th style="min-width:80px">Size</th>
+            <th style="min-width:110px">Delete link</th>
+          </tr>
+        </thead>
+        <tbody>
       <?php
   $files = $file->listVideos();
   if(!empty($files))
   {
-    ?>
-      <table style="text-align: left;" class="table table-striped table-hover ">
-        <thead>
-          <tr>
-            <th style="min-width:800px; height:35px">Title</th>
-            <th style="min-width:80px">Size</th>
-            <th style="min-width:110px">Delete link</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php
     $i = 0;
     $totalSize = 0;
     
@@ -282,31 +280,26 @@
               echo "<tr>";
               echo "<td>".$fileDisplay."</td>";
               echo "<td>".$f["size"]."</td>";
-              echo "<td><a data-href=\"?delete=$i&type=v\" data-toggle=\"modal\" data-target=\"#confirm-delete\" class=\"btn btn-danger btn-sm\">Delete</a></td>";
+              echo "<td><a data-href=\"?delete=$i&type=v\" data-toggle=\"modal\" data-target=\"#confirm-delete\" class=\"btn btn-danger btn-xs\">Delete</a></td>";
               echo "</tr>";
               $i++;
             }
-    ?>
+  }
+  else
+  {
+    echo "<tr>";
+    echo "<td colspan=\"3\">No videos found.</td>";
+    echo "</tr>";
+  }
+  ?>
         </tbody>
       </table>
       <br/>
       <br/>
-      <?php
-  }
-  else
-  {
-    echo "<br><div class=\"alert alert-warning\" role=\"alert\">No Videos!</div>";
-  }
-  ?>
     </div>
     <div class="tab-pane fade<?php echo($page_music_class); ?>" id="songlist">
       <br /><br />
-      <h4 style="text-align: center;">All Downloaded Songs</h4>
-      <?php
-  $files = $file->listMusics();
-  if(!empty($files))
-  {
-    ?>
+      <h4 style="text-align: center;">All Downloaded Music</h4>
       <table style="text-align: left;" class="table table-striped table-hover ">
         <thead>
           <tr>
@@ -316,7 +309,10 @@
           </tr>
         </thead>
         <tbody>
-          <?php
+  <?php
+  $files = $file->listMusics();
+  if(!empty($files))
+  {
     $i = 0;
     $totalSize = 0;
     
@@ -328,22 +324,22 @@
               echo "<tr>";
               echo "<td>".$fileDisplay."</td>";
               echo "<td>".$f["size"]."</td>";
-              echo "<td><a data-href=\"?delete=$i&type=m\" data-toggle=\"modal\" data-target=\"#confirm-delete\" class=\"btn btn-danger btn-sm\">Delete</a></td>";
+              echo "<td><a data-href=\"?delete=$i&type=m\" data-toggle=\"modal\" data-target=\"#confirm-delete\" class=\"btn btn-danger btn-xs\">Delete</a></td>";
               echo "</tr>";
               $i++;
             }
-    ?>
+  }
+  else
+  {
+    echo "<tr>";
+    echo "<td colspan=\"3\">No music found.</td>";
+    echo "</tr>";
+  }
+  ?>
         </tbody>
       </table>
       <br/>
       <br/>
-      <?php
-  }
-  else
-  {
-    echo "<br><div class=\"alert alert-warning\" role=\"alert\">No Songs!</div>";
-  }
-  ?>
     </div>
   </div>  
 </div>
