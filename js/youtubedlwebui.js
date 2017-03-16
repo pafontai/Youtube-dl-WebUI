@@ -112,3 +112,32 @@ function helpPanel()
     panelBody.removeClass('panel-collapsed');
   }
 }
+
+function updateBookmarklet()
+{
+  var audio_format = $('#bml_audio_format').val();
+  var video_format = $('#bml_format').val();
+  var audio_extract = $('#bml_audio_convert').is(":checked");
+  var auto_submit = $('#bml_auto_submit').is(":checked");
+  var base_url = $('#bml_base_uri').val();
+  var getparm = "?";
+
+  if (audio_extract)
+  {
+    getparm += "audio=true&";
+    getparm += "audio_format="+audio_format;
+    $('#bml_audio_group').show();
+    $('#bml_video_group').hide();
+    $('#cust_bml').html("Download Audio");
+  } else {
+    getparm += "format="+video_format;
+    $('#bml_audio_group').hide();
+    $('#bml_video_group').show();
+    $('#cust_bml').html("Download Video");
+  }
+  if (auto_submit)
+    getparm += "&auto_submit=true";
+  getparm += "&url=";
+
+  $('#cust_bml').attr('href', "javascript:(function(){f='"+base_url+getparm+"'+encodeURIComponent(window.location.href);a=function(){if(!window.open(f))location.href=f};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})()");
+}

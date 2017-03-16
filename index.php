@@ -91,7 +91,7 @@
     
     if(isset($_POST['audio_format']) && !empty($_POST['audio_format']))
     {
-      $dl_format = "--audio-format " . $_POST['audio_format'];
+      $audio_format = "--audio-format " . $_POST['audio_format'];
       $get_parms .= "audio_format=".$_POST['audio_format']."&";
     }
     
@@ -108,6 +108,45 @@
       header("Location: index.php".$get_params."#".$config['redirectAfterSubmit']);
     }
   }
+  
+  $urlvalue = "";
+  if (isset($_GET['url']))
+  {
+    $urlvalue = " value=\"".urldecode($_GET['url'])."\"";
+    if (isset($_GET['auto_submit']))
+    {
+      $audio_format = "--audio-format mp3";
+      $dl_format = "-f best";
+      if (isset($_GET["audio"]) && $_GET["audio"] == "true")
+        $audio_only = true;
+      else
+        $audio_only = false;
+      
+      if(isset($_GET['audio_format']) && !empty($_GET['audio_format']))
+        $audio_format = "--audio-format " . $_GET['audio_format'];
+    
+      if(isset($_GET['format']) && !empty($_GET['format']))
+        $dl_format = "-f " . $_GET['format'];
+      
+      $downloader = new Downloader(urldecode($_GET['url']), $audio_only, $dl_format, $audio_format);
+     
+      if(!isset($_SESSION['errors']))
+        header("Location: index.php?submitstatus=success");
+      else
+        header("Location: index.php?submitstatus=error");
+    }
+  }
+
+  if (isset($_GET['submitstatus']))
+  {
+    if ($_GET['submitstatus'] == "success")
+    {
+      die("<b>Video has been submitted successfully</b><br /><br /><a href=\"javascript:window.close();\">Close this window</a> or <a href=\"index.php#downloads\">Check the status of the download</a>");
+    } else {
+      die("<b>Something went wrong. You can try to submit the video manually.</b><br /><br /><a href=\"javascript:window.close();\">Close this window</a> or <a href=\"index.php\">Try to submit the download manually</a>");
+    }
+  }
+  
   $siteTheme = $config['siteTheme'];
   if (isset($_GET['theme']))
     $siteTheme = $_GET['theme'];
@@ -122,11 +161,59 @@
     $video_form_style = "";
     $audio_form_style = "style=\"display: none;\"";
   }
-  
-  $urlvalue = "";
-  if (isset($_GET['url']))
-    $urlvalue = " value=\"".urldecode($_GET['url'])."\"";
+
+  $uri_parts = explode('?', $_SERVER['REQUEST_URI'], 2);
+  $uri_parts = $uri_parts[0];
+  $uri_parts = explode('#', $uri_parts, 2);
+  $baseuri = 'http://' . $_SERVER['HTTP_HOST'] . $uri_parts[0];
+  $bookmarkletvideo = "javascript:(function(){f='".$baseuri."?url='+encodeURIComponent(window.location.href);a=function(){if(!window.open(f))location.href=f};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})()";
+  $bookmarkletmusic = "javascript:(function(){f='".$baseuri."?audio=true&url='+encodeURIComponent(window.location.href);a=function(){if(!window.open(f))location.href=f};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})()";
   ?>
+<div class="modal fade" id="custom_bookmarklet" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+  <div class="modal-dialog" style="z-index: 10000;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" type="button" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title">Custom Bookmarklet</h4>
+      </div>
+      <div class="modal-body">
+        <input id="bml_base_uri" type="hidden" value="<?php echo($baseuri); ?>" />
+        Select the options below and then drag the button to your bookmarks toolbar.<br /><br />
+        <label<?php echo($config['disableExtraction'] ? " style=\"display: none;\"" : ""); ?>>
+          <input id="bml_audio_convert" onclick="updateBookmarklet();" type="checkbox" name="bml_audio"> Convert to Audio
+        </label><br />
+        <label id="bml_audio_group" style="display: none;">
+          Audio Format:
+          <select style="width: 75px;" name="bml_audio_format" id="bml_audio_format" onchange="updateBookmarklet();">
+            <option value="mp3" selected="selected">mp3</option>
+            <option value="aac">aac</option>
+            <option value="vorbis">vorbis</option>
+            <option value="m4a">m4a</option>
+            <option value="opus">opus</option>
+            <option value="wav">wav</option>
+          </select>
+        </label>
+        <label id="bml_video_group">
+          Video Quality:
+          <select style="width: 75px;" name="bml_format" id="bml_format" onchange="updateBookmarklet();">
+            <option value="best" selected="selected">Best</option>
+            <option value="worst">Smallest</option>
+          </select>
+        </label>
+        <br />
+        <label>
+          <input id="bml_auto_submit" onclick="updateBookmarklet();" type="checkbox" name="bml_auto_submit"> Auto Submit
+        </label>
+        <br />Drag the below button to your bookmarks toolbar.<br />
+        <a id="cust_bml" href="<?php echo($bookmarkletvideo); ?>" style="width: 300px;" class="btn btn-primary">Download Video</a>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog" style="z-index: 10000;">
     <div class="modal-content">

@@ -1,12 +1,3 @@
-<?php
-$uri_parts = explode('?', $_SERVER['REQUEST_URI'], 2);
-$uri_parts = $uri_parts[0];
-$uri_parts = explode('#', $uri_parts, 2);
-$baseuri = 'http://' . $_SERVER['HTTP_HOST'] . $uri_parts[0];
-$bookmarkletvideo = "javascript:(function(){f='".$baseuri."?url='+encodeURIComponent(window.location.href);a=function(){if(!window.open(f))location.href=f};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})()";
-$bookmarkletmusic = "javascript:(function(){f='".$baseuri."?audio=true&url='+encodeURIComponent(window.location.href);a=function(){if(!window.open(f))location.href=f};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})()";
-?>
-
 	<footer class="footer" style="position: fixed;bottom: 0;padding: 0;margin: 0;width: 100%;">
             <div class="well text-center" style="padding: 0;margin: 0;">
 
@@ -37,7 +28,9 @@ $bookmarkletmusic = "javascript:(function(){f='".$baseuri."?audio=true&url='+enc
               <b>How does it work?</b>
             </td>
             <td>
-              Simply paste your video link(s) in the field, select the quality or audio format and click "Download". You can also drag the following links to your bookmarks bar and simply click on the bookmark while watching the video you want to download. <a href="<?php echo($bookmarkletvideo); ?>">Download Video</a> <a href="<?php echo($bookmarkletmusic); ?>">Download Audio</a>
+              Simply paste your video link(s) in the field, select the quality or audio format and click "Download". You can also drag the following links to your bookmarks bar and simply click on the bookmark while watching the video you want to download.<br />
+              <a href="<?php echo($bookmarkletvideo); ?>" class="btn btn-default btn-xs">Download Video</a>, <a href="<?php echo($bookmarkletmusic); ?>" class="btn btn-default btn-xs">Download Audio</a> or 
+              <button data-toggle="modal" data-target="#custom_bookmarklet" class="btn btn-default btn-xs">Click here to create a custom bookmarklet</button></td>";
             </td>
           </tr>
           <tr>
