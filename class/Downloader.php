@@ -216,15 +216,16 @@
       $file = $GLOBALS['config']['logPath'].'/'.$fpid;
       if (!file_exists($file))
         return;
+      $outfile = $GLOBALS['config']['logPath']."/".str_replace("pid_", "job_", $fpid);
+      $completed = $GLOBALS['config']['logPath']."/".str_replace("pid_", "ytdl_", $fpid);      
       $jpid = trim(file_get_contents($file));
       $pidcmd = trim(file_get_contents('/proc/'.$jpid.'/cmdline'));
       // Check that this really is a youtube-dl process and not a process with the same PID as an old job
       if (strpos($pidcmd, $GLOBALS['config']['youtubedlExe']) !== false)
         shell_exec("kill ".$jpid);
       
-      $pos = strrpos($file, "job_");
-      $completed = substr_replace($file, "ytdl_", $pos, strlen("job_"))."_cancelled";
-      rename($file,$completed);
+      $pos = strrpos($file, "pid_");
+      rename($outfile,$completed);
       unlink($file);
     }
     
