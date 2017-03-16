@@ -41,11 +41,11 @@ return array(
    
   /**
    * Specify the tab to redirect to after submitting a download URL.
-   * allowed values are: 'downloading','home','vid','music'
+   * allowed values are: 'downloads','home','videos','music'
    *
-   * 'redirectAfterSubmit' => 'downloading'
+   * 'redirectAfterSubmit' => 'downloads'
    */
-  'redirectAfterSubmit' => 'downloading',
+  'redirectAfterSubmit' => 'downloads',
 
   /**
    * The full absolute path where downloads will be saved to
@@ -77,9 +77,19 @@ return array(
    * Make sure that the user who is running the webserver has write access
    * to this directory.
    *
-   * 'logPath' => '/var/www/tubedl/tmp'
+   * 'logPath' => '/var/www/tubedl/logs'
    */
-  'logPath' => '/var/www/tubedl/tmp',
+  'logPath' => '/var/www/tubedl/logs',
+  
+  /**
+   * If you the path you have set with logPath is accessible through your webserver,
+   * you can specify the relative path without a trailing slash. This will be used
+   * to create the links to the logs.
+   * If you don't wish to expose the logs, leave this empty
+   *
+   * 'logURL' => 'logs'
+   */
+  'logURL' => 'logs',
   
   /**
    * Specify the command to run youtube-dl. This has to be the full
@@ -90,6 +100,22 @@ return array(
    *
    * 'youtubedlExe' => '/usr/bin/youtube-dl'
    */
-  'youtubedlExe' => '/usr/bin/youtube-dl'
+  'youtubedlExe' => '/usr/bin/youtube-dl',
+
+  /**
+   * Specify if .part files should be kept when cliking on Stop All on 
+   * the download status page.
+   *
+   * 'keepPartialFiles' => false
+   */
+  'keepPartialFiles' => false,
+
+  /**
+   * If set to true, the script will output all errors. 
+   * DO NOT USE THIS IN PRODUCTION ON OUTSIDE FACING WEBSITES
+   *
+   * 'debug' => false
+   */
+  'debug' => false 
   );
 ?>

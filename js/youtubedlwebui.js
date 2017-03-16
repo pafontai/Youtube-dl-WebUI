@@ -3,8 +3,7 @@ function loadList()
   $.get( "index.php?jobs", function( data ) {
     var arrayLength = data.jobs.length;
     if (arrayLength==0) {
-      $('#dlprogress').html( "<tr><td colspan=\"3\">No downloads in progress.</td></tr>" );
-      $('#killallbutton').hide();
+      $('#dlprogress').html( "<tr><td colspan=\"4\">No downloads in progress.</td></tr>" );
     } else {
       var htmlString = "";
       var liString = "";
@@ -14,18 +13,32 @@ function loadList()
         if (data.jobs[i].type == "audio")
           liString = '<i class=\"fa fa-music\"></i>';
         htmlString += "<tr>";       
-        htmlString += "<td>"+data.jobs[i].site+"</td>";
-        htmlString += "<td>"+liString+" "+data.jobs[i].file+"</td>";
-        htmlString += "<td>"+data.jobs[i].status+"</td>";
+        htmlString += "<td style=\"vertical-align: middle;\">"+data.jobs[i].site+"</td>";
+        htmlString += "<td style=\"vertical-align: middle;\">"+liString+" "+data.jobs[i].file+"</td>";
+        htmlString += "<td style=\"vertical-align: middle;\">"+data.jobs[i].status+"</td>";
+        htmlString += "<td style=\"vertical-align: middle;\">";
+        htmlString += "<div class=\"btn-group\">";
+        htmlString += "<a style=\"width: 100px;\" data-href=\"?kill="+data.jobs[i].pid+"\" data-toggle=\"modal\" data-target=\"#confirm-delete\" class=\"btn btn-danger btn-xs\">Stop</a>";
+        htmlString += "</div>";
         htmlString += "</tr>";       
       }
+      htmlString += "<tr>";
+      htmlString += "<td></td>";
+      htmlString += "<td></td>";
+      htmlString += "<td></td>";
+      htmlString += "<td>";
+      htmlString += "<div class=\"btn-group\">";
+      htmlString += "<button id=\"killallbutton\" style=\"width: 100px;\" class=\"btn btn-danger btn-xs\" data-href=\"?kill=all\" data-toggle=\"modal\" data-target=\"#confirm-delete\">";
+      htmlString += "Stop All";
+      htmlString += "</button>";
+      htmlString += "</div>";
+      htmlString += "</td>";
+      htmlString += "</tr>";
       $('#dlprogress').html(htmlString);
-      $('#killallbutton').show();
     }
     arrayLength = data.finished.length;
     if (arrayLength==0) {
-      $('#dlcompleted').html( "<tr><td colspan=\"3\">No completed downloads on record.</td></tr>" );
-      $('#clearallbutton').hide();
+      $('#dlcompleted').html( "<tr><td colspan=\"4\">No completed downloads on record.</td></tr>" );
     } else {
       var htmlString = "";
       var liString = "";
@@ -35,21 +48,42 @@ function loadList()
         if (data.finished[i].type == "audio")
           liString = '<i class=\"fa fa-music\"></i>';
         htmlString += "<tr>";       
-        htmlString += "<td>"+data.finished[i].site+"</td>";
-        htmlString += "<td>"+liString+" "+data.finished[i].file+"</td>";
-        htmlString += "<td>"+data.finished[i].status+"</td>";
+        htmlString += "<td style=\"vertical-align: middle;\">"+data.finished[i].site+"</td>";
+        htmlString += "<td style=\"vertical-align: middle;\">"+liString+" "+data.finished[i].file+"</td>";
+        htmlString += "<td style=\"vertical-align: middle;\">"+data.finished[i].status+"</td>";
+        htmlString += "<td style=\"vertical-align: middle;\">";
+        htmlString += "<div class=\"btn-group\">";
+        var buttonWidth = "100px;";
+        if (data.logURL != "") {
+          buttonWidth = "60px;";
+          htmlString += "<a href=\""+data.logURL+"/"+data.finished[i].pid+"\" style=\"width: 40px;\" target=\"_blank\" class=\"btn btn-default btn-xs\">Log</a>";
+        }
+        htmlString += "<a style=\"width: "+buttonWidth+"\" data-href=\"?clear="+data.finished[i].pid+"\" data-toggle=\"modal\" data-target=\"#confirm-delete\" class=\"btn btn-danger btn-xs\">Remove</a>";
+        htmlString += "</div>";
+        htmlString += "</td>";
         htmlString += "</tr>";       
       }
+      htmlString += "<tr>";
+      htmlString += "<td></td>";
+      htmlString += "<td></td>";
+      htmlString += "<td></td>";
+      htmlString += "<td>";
+      htmlString += "<div class=\"btn-group\">";
+      htmlString += "<button id=\"clearallbutton\" style=\"width: 100px;\" class=\"btn btn-danger btn-xs\" data-href=\"?clear=recent\" data-toggle=\"modal\" data-target=\"#confirm-delete\">";
+      htmlString += "Remove All";
+      htmlString += "</button>";
+      htmlString += "</div>";
+      htmlString += "</td>";
+      htmlString += "</tr>";
       $('#dlcompleted').html(htmlString);
-      $('#clearallbutton').show();
     }
   }, "json");
 } 
-
+var refreshInterval;
 $(document).ready(function() {
   if ($("#dlprogress").length) {
     loadList();
-    var refreshInterval = setInterval(loadList, 3000);
+    refreshInterval = setInterval(loadList, 3000);
     $("#url").focus();
   }
 });

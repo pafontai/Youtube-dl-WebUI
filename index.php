@@ -1,8 +1,18 @@
 <?php
+  $config = require 'config/config.php';
+  if ($config['debug']) {
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL); 
+  } else {
+    ini_set('display_errors', 0);
+    ini_set('display_startup_errors', 0);
+    error_reporting(0); 
+  }
+
   require_once 'class/Session.php';
   require_once 'class/Downloader.php';
   require_once 'class/FileHandler.php';
-  $config = require 'config/config.php';
   
   $session = Session::getInstance();
   $file = new FileHandler;
@@ -15,7 +25,8 @@
               $jsonString .= "{ \"file\": ".$key['file'].", ";
               $jsonString .= "\"status\": ".$key['status'].", ";
               $jsonString .= "\"site\": ".$key['site'].", ";
-              $jsonString .= "\"type\": ".$key['type'];
+              $jsonString .= "\"type\": ".$key['type'].", ";
+              $jsonString .= "\"pid\": ".$key['pid'];
               $jsonString .= "},";
             }
     $jsonString = trim($jsonString, ",");
@@ -27,11 +38,13 @@
               $jsonString .= "{ \"file\": ".$key['file'].", ";
               $jsonString .= "\"status\": ".$key['status'].", ";
               $jsonString .= "\"site\": ".$key['site'].", ";
-              $jsonString .= "\"type\": ".$key['type'];
+              $jsonString .= "\"type\": ".$key['type'].", ";
+              $jsonString .= "\"pid\": ".$key['pid'];
               $jsonString .= "},";
             }
     $jsonString = trim($jsonString, ",");
-    $jsonString .= "]}";
+    $jsonString .= "],";
+    $jsonString .= "\"logURL\": ".json_encode($config['logURL'])." }";
     echo $jsonString;
     die();
   }
@@ -40,21 +53,27 @@
   {
     $file->delete($_GET["delete"], $_GET["type"]);
     if ($_GET["type"] == "m")
-      header("Location: index.php?tab=music");
+      header("Location: index.php#music");
     else
-      header("Location: index.php?tab=vid");
+      header("Location: index.php#videos");
   }
   
-  if(isset($_GET['kill']) && !empty($_GET['kill']) && $_GET['kill'] === "all")
+  if(isset($_GET['kill']) && !empty($_GET['kill']))
   {
-    Downloader::kill_them_all();
-    header("Location: index.php?tab=downloading");
+    if ($_GET['kill'] === "all")
+      Downloader::kill_them_all();
+    else
+      Downloader::kill_one_of_them($_GET['kill']);
+    header("Location: index.php#downloads");
   }
   
-  if(isset($_GET['clear']) && !empty($_GET['clear']) && $_GET['clear'] === "recent")
+  if(isset($_GET['clear']) && !empty($_GET['clear']))
   {
-    Downloader::clear_finished();
-    header("Location: index.php?tab=downloading");
+    if ($_GET['clear'] === "recent")
+      Downloader::clear_finished();
+    else
+      Downloader::clear_one_finished($_GET['clear']);
+    header("Location: index.php#downloads");
   }
   
   if(isset($_POST['urls']) && !empty($_POST['urls']))
@@ -86,7 +105,7 @@
     
     if(!isset($_SESSION['errors']))
     {
-      header("Location: index.php".$get_parms."tab=".$config['redirectAfterSubmit']);
+      header("Location: index.php".$get_params."#".$config['redirectAfterSubmit']);
     }
   }
   $siteTheme = $config['siteTheme'];
@@ -94,32 +113,6 @@
     $siteTheme = $_GET['theme'];
   require 'views/header.php';
   
-  // Process get headers for page navigation
-  $tab_home_class = "";
-  $page_home_class = "";
-  $tab_dl_class = "";
-  $page_dl_class = "";
-  $tab_vid_class = "";
-  $page_vid_class = "";
-  $tab_music_class = "";
-  $page_music_class = "";
-  switch (@$_GET["tab"]) {
-    case "downloading":
-      $tab_dl_class = "active";
-      $page_dl_class = " active in";
-      break;
-    case "vid":
-      $tab_vid_class = "active";
-      $page_vid_class = " active in";
-      break;
-    case "music":
-      $tab_music_class = "active";
-      $page_music_class = " active in";
-      break;
-    default:
-      $tab_home_class = "active";
-      $page_home_class = " active in";
-  }
   if (@$_GET["audio"]=="true" && !$config['disableExtraction']) {
     $audio_check = " checked=\"checked\"";
     $video_form_style = " style=\"display: none;\"";
@@ -129,6 +122,10 @@
     $video_form_style = "";
     $audio_form_style = "style=\"display: none;\"";
   }
+  
+  $urlvalue = "";
+  if (isset($_GET['url']))
+    $urlvalue = " value=\"".urldecode($_GET['url'])."\"";
   ?>
 <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog" style="z-index: 10000;">
@@ -154,14 +151,14 @@
 </script>
 <div class="container" style="margin-bottom: 50px;">
   
-  <ul class="nav nav-pills">
-    <li class="<?php echo($tab_home_class); ?>"><a id="home_link" href="#home" data-toggle="tab" aria-expanded="true">Home</a></li>
-    <li class="<?php echo($tab_dl_class); ?>"><a id="dl_link" href="#downloading" data-toggle="tab" aria-expanded="false">Downloading</a></li>
-    <li class="<?php echo($tab_vid_class); ?>"><a id="vid_link" href="#vidlist" data-toggle="tab" aria-expanded="false">Videos</a></li>
-    <li class="<?php echo($tab_music_class); ?>"><a id="music_link" href="#songlist" data-toggle="tab" aria-expanded="false">Music</a></li>
+  <ul id="mainnav" class="nav nav-pills">
+    <li class="active"><a id="home_link" href="#home" data-toggle="tab" aria-expanded="true">Home</a></li>
+    <li><a id="dl_link" href="#downloads" data-toggle="tab" aria-expanded="false">Downloading</a></li>
+    <li><a id="vid_link" href="#videos" data-toggle="tab" aria-expanded="false">Videos</a></li>
+    <li><a id="music_link" href="#music" data-toggle="tab" aria-expanded="false">Music</a></li>
   </ul>
   <div id="myTabContent" class="tab-content">
-    <div class="tab-pane fade<?php echo($page_home_class); ?>" id="home">
+    <div class="tab-pane fade active in" id="home">
       <div class="row">
         <br />
         <h1 style="text-align: center;"><?php echo($config['siteName']); ?></h1><br />
@@ -178,7 +175,7 @@
         <form id="download-form" class="form-horizontal" action="index.php" method="post">          
           <div class="form-group">
             <div class="col-md-12">
-              <input class="form-control" id="url" name="urls" placeholder="Enter the URL to the video you want to download. If you want to enter more that one please separate with a comma." type="text">
+              <input class="form-control" id="url" name="urls"<?php echo($urlvalue); ?> placeholder="Enter the URL to the video you want to download. If you want to enter more that one please separate with a comma." type="text">
             </div>
             <div class="col-md-12">
               <div style="text-align: center;" class="checkbox">
@@ -210,7 +207,7 @@
         </form>
       </div>
     </div>
-    <div class="tab-pane fade<?php echo($page_dl_class); ?>" id="downloading">
+    <div class="tab-pane fade" id="downloads">
       <div style="text-align: center;" class="row">
         <br /><br />
         <h4>Currently Downloading</h4>
@@ -220,19 +217,17 @@
               <th style="width: 10%; height:35px;">Site</th>
               <th>File</th>
               <th style="width: 25%;">Status</th>
+              <th style="width: 120px;">Actions</th>
             </tr>
           </thead>
           <tbody id="dlprogress">
             <?php
   echo "<tr>";
-  echo "<td colspan=\"3\">Getting downloads please wait...</td>";
+  echo "<td colspan=\"4\">Getting downloads please wait...</td>";
   echo "<td></td>";
   ?>
           </tbody>
         </table>
-        <button id="killallbutton" style="width: 300px;" class="btn btn-default btn-xs" data-href="?kill=all" data-toggle="modal" data-target="#confirm-delete">
-          Stop All Downloads
-        </button>
         <br /><br />
         <h4>Recently Completed</h4>
         <table style="text-align: left;" class="table table-striped table-hover ">
@@ -241,30 +236,28 @@
               <th style="width: 10%; height:35px;">Site</th>
               <th>File</th>
               <th style="width: 25%;">Status</th>
+              <th style="width: 120px;">Actions</th>
             </tr>
           </thead>
           <tbody id="dlcompleted">
             <?php
   echo "<tr>";
-  echo "<td colspan=\"3\">Getting downloads please wait...</td>";
+  echo "<td colspan=\"4\">Getting downloads please wait...</td>";
   echo "<td></td>";
   ?>
           </tbody>
         </table>
-        <button id="clearallbutton" style="width: 300px;" class="btn btn-default btn-xs" data-href="?clear=recent" data-toggle="modal" data-target="#confirm-delete">
-          Clear List
-        </button>
       </div>
     </div>
-    <div class="tab-pane fade<?php echo($page_vid_class); ?>" id="vidlist">
+    <div class="tab-pane fade" id="videos">
       <br /><br />
-      <h4 style="text-align: center;">All Downloaded Videos</h4>
+      <h4 style="text-align: center;">Downloaded Videos</h4>
       <table style="text-align: left;" class="table table-striped table-hover ">
         <thead>
           <tr>
-            <th style="min-width:800px; height:35px">Title</th>
+            <th style="min-width:800px; height:35px">File</th>
             <th style="min-width:80px">Size</th>
-            <th style="min-width:110px">Delete link</th>
+            <th style="min-width:110px">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -300,13 +293,13 @@
       <br/>
       <br/>
     </div>
-    <div class="tab-pane fade<?php echo($page_music_class); ?>" id="songlist">
+    <div class="tab-pane fade" id="music">
       <br /><br />
-      <h4 style="text-align: center;">All Downloaded Music</h4>
+      <h4 style="text-align: center;">Downloaded Music</h4>
       <table style="text-align: left;" class="table table-striped table-hover ">
         <thead>
           <tr>
-            <th style="min-width:800px; height:35px">Title</th>
+            <th style="min-width:800px; height:35px">File</th>
             <th style="min-width:80px">Size</th>
             <th style="min-width:110px">Delete link</th>
           </tr>
@@ -346,6 +339,17 @@
     </div>
   </div>  
 </div>
+<script>
+  $('#mainnav a').click(function(e) {
+    e.preventDefault();
+    var id = $(e.target).attr("href").substr(1);
+    window.location.hash = id;
+    $(this).tab('show');
+  });
+
+  var hash = window.location.hash;
+  $('#mainnav a[href="' + hash + '"]').tab('show');
+</script>
 <?php
   unset($_SESSION['errors']);
   require 'views/footer.php';

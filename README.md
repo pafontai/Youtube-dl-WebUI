@@ -10,6 +10,10 @@ It supports simultaneous downloads in the background.
 ## Changes from original
 - UI redesign
 - Download status is displayed
+- Cancel individual jobs
+- View download log (optional)
+- Bookmarklet to open downloader with URL already filled in (the bookmarklets can be found in the Info and Help section - click the bar at the bottom of the webpage)
+- Show completed and cancelled downloads
 - Audio format can be selected
 - Video quality can be selected (currently only best and smallest)
 - File deletion confirmation dialog

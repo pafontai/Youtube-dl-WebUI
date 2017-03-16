@@ -75,8 +75,8 @@
       $dir = new DirectoryIterator($GLOBALS['config']['logPath']);
       foreach ($dir as $fileinfo) {
         if (!$fileinfo->isDot() && $fileinfo->isFile() && strpos($fileinfo->getFilename(), "pid_")===0) {
-          $outfile = $GLOBALS['config']['logPath']."/".str_replace("pid_", "out_", $fileinfo->getFilename());
-          $completefile = $GLOBALS['config']['logPath']."/".str_replace("pid_", "done_", $fileinfo->getFilename());
+          $outfile = $GLOBALS['config']['logPath']."/".str_replace("pid_", "job_", $fileinfo->getFilename());
+          $completefile = $GLOBALS['config']['logPath']."/".str_replace("pid_", "ytdl_", $fileinfo->getFilename());
           if (!file_exists($outfile)){
             //No output file exists for job
             unlink($fileinfo->getPathname());
@@ -103,18 +103,15 @@
           $filename = "TBC";
           $site = "TBC";
           $siteset = false;
-          $dldone = false;
           $isaudio = false;
           $listpos = "";
           if (strpos($fileinfo->getFilename(), "_a") !== false)
             $isaudio = true;
           if ($handle) {
             while (($line = fgets($handle)) !== false) {
-              if (strpos($line, '[ffmpeg]') !== false) 
-                $dldone = true;
               if (strpos($line, '[download] Downloading') !== false)
                 $listpos = "(".substr($line, 29).")";
-              if (!$dldone)
+              if (trim($line) != "")
                 $lastline = $line;
               $verylastline = $line;
               if (!$siteset) {
@@ -134,7 +131,7 @@
               $lastline = "Getting file information from website"; 
             } else {
               $pos = strrpos($lastline, '[download]');
-              $lastline = $pos === false ? $url : trim(substr($lastline, $pos + 11));
+              $lastline = $pos === false ? "" : trim(substr($lastline, $pos + 11));
               $filename = urlencode($filename." ".$listpos);
               $filename = str_replace("%0A", "", $filename);
               $filename = urldecode($filename);
@@ -151,7 +148,8 @@
               'file' => json_encode($filename),
               'site' => json_encode($site),
               'status' => str_replace("\\n", "", json_encode($lastline)),
-              'type' => json_encode($type)
+              'type' => json_encode($type),
+              'pid' => json_encode($fileinfo->getFilename())
             );
           }
         }
@@ -164,26 +162,21 @@
       $bjs = [];
       $dir = new DirectoryIterator($GLOBALS['config']['logPath']);
       foreach ($dir as $fileinfo) {
-        if (!$fileinfo->isDot() && $fileinfo->isFile() && strpos($fileinfo->getFilename(), "done_")===0) {
+        if (!$fileinfo->isDot() && $fileinfo->isFile() && strpos($fileinfo->getFilename(), "ytdl_")===0) {
           $handle = fopen($fileinfo->getPathname(), "r");
           $lastline = "";
           $verylastline = "";
           $filename = "TBC";
           $site = "TBC";
           $siteset = false;
-          $dldone = false;
           $isaudio = false;
           $listpos = "";
           if (strpos($fileinfo->getFilename(), "_a") !== false)
             $isaudio = true;
           if ($handle) {
             while (($line = fgets($handle)) !== false) {
-              if (strpos($line, '[ffmpeg]') !== false) 
-                $dldone = true;
               if (strpos($line, '[download] Downloading') !== false)
                 $listpos = "(".substr($line, 29).")";
-              if (!$dldone)
-                $lastline = $line;
               $verylastline = $line;
               if (!$siteset) {
                 $siteset = true;
@@ -201,12 +194,16 @@
             $type = "video";
             if ($isaudio)
               $type = "audio";
-            
+            $jobstatus = "Completed";
+            if (strpos($fileinfo->getFilename(), "_cancelled")!==false)
+              $jobstatus = "Cancelled";
+
             $bjs[] = array(
               'file' => json_encode($filename),
               'site' => json_encode($site),
-              'status' => str_replace("\\n", "", json_encode("Completed")),
-              'type' => json_encode($type)
+              'status' => str_replace("\\n", "", json_encode($jobstatus)),
+              'type' => json_encode($type),
+              'pid' => json_encode($fileinfo->getFilename())
             );
           }
         }
@@ -214,11 +211,30 @@
       return $bjs;
     }
     
+    public static function kill_one_of_them($fpid)
+    {
+      $file = $GLOBALS['config']['logPath'].'/'.$fpid;
+      if (!file_exists($file))
+        return;
+      $jpid = trim(file_get_contents($file));
+      $pidcmd = trim(file_get_contents('/proc/'.$jpid.'/cmdline'));
+      // Check that this really is a youtube-dl process and not a process with the same PID as an old job
+      if (strpos($pidcmd, $GLOBALS['config']['youtubedlExe']) !== false)
+        shell_exec("kill ".$jpid);
+      
+      $pos = strrpos($file, "job_");
+      $completed = substr_replace($file, "ytdl_", $pos, strlen("job_"))."_cancelled";
+      rename($file,$completed);
+      unlink($file);
+    }
+    
     public static function kill_them_all()
     {
-      foreach(glob($GLOBALS['config']['logPath'].'/out_*') as $file)
+      foreach(glob($GLOBALS['config']['logPath'].'/job_*') as $file)
       {
-        unlink($file);
+        $pos = strrpos($file, "job_");
+        $completed = substr_replace($file, "ytdl_", $pos, strlen("job_"))."_cancelled";
+        rename($file,$completed);
       }
 
       foreach(glob($GLOBALS['config']['logPath'].'/pid_*') as $file)
@@ -238,15 +254,23 @@
       
       $folder = $GLOBALS['config']['outputFolder'];
       
-      foreach(glob($folder.'/*.part') as $file)
+      if (!$GLOBALS['config']['keepPartialFiles'])
       {
-        unlink($file);
+        foreach(glob($folder.'/*.part') as $file)
+        {
+          unlink($file);
+        }
       }
+    }
+
+    public static function clear_one_finished($fpid)
+    {
+      unlink($GLOBALS['config']['logPath'].'/'.$fpid);
     }
     
     public static function clear_finished()
     {
-      foreach(glob($GLOBALS['config']['logPath'].'/done_*') as $file)
+      foreach(glob($GLOBALS['config']['logPath'].'/ytdl_*') as $file)
       {
         unlink($file);
       }
@@ -289,10 +313,18 @@
         }
       }
     }
+
+    private function getFileName($prefix, $suffix)
+    {
+      do {
+        $uid = $prefix.uniqid().$suffix;
+      } while (file_exists($uid));
+      return $uid;
+    }
     
     private function do_download()
     {
-      $fno = str_replace("%0A", "", urlencode($this->background_jobs()));
+      $suffix = "";
       $cmd = $this->config['youtubedlExe'];
       $cmd .= " -o ".$this->download_path."/";
       $cmd .= escapeshellarg("%(title)s-%(uploader)s.%(ext)s");
@@ -302,8 +334,10 @@
       {
         $cmd .= " -x";
         $cmd .= " ".$this->audio_format;
-        $fno .= "_a";
+        $suffix = "_a";
       }
+      $fno = $this->getFileName("job_",$suffix);
+      $fnp = str_replace("job_", "pid_", $fno);
       foreach($this->urls as $url)
               {
                 $cmd .= " ".escapeshellarg($url);
@@ -311,9 +345,8 @@
       
       $cmd .= " --restrict-filenames"; // --restrict-filenames is for specials chars
       $cmd .= " --ignore-errors";
-      $cmd .= " > ".$this->config['logPath']."/out_".$fno." & echo $! > ".$this->config['logPath']."/pid_".$fno;
+      $cmd .= " > ".$this->config['logPath']."/".$fno." & echo $! > ".$this->config['logPath']."/".$fnp;
       passthru($cmd);
     }
   }
-    
     ?>
