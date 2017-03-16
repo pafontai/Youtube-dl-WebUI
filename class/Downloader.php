@@ -224,7 +224,6 @@
       if (strpos($pidcmd, $GLOBALS['config']['youtubedlExe']) !== false)
         shell_exec("kill ".$jpid);
       
-      $pos = strrpos($file, "pid_");
       rename($outfile,$completed);
       unlink($file);
     }
