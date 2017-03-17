@@ -130,10 +130,10 @@
       
       $downloader = new Downloader(urldecode($_GET['url']), $audio_only, $dl_format, $audio_format);
      
-      if(!isset($_SESSION['errors']))
-        header("Location: index.php?submitstatus=success");
+      if(isset($_SESSION['errors']) && $_SESSION['errors'] > 0)
+        header("Location: index.php?submitstatus=error&errors=".implode(", ",$_SESSION['errors']));
       else
-        header("Location: index.php?submitstatus=error");
+        header("Location: index.php?submitstatus=success");
     }
   }
 
@@ -143,7 +143,9 @@
     {
       die("<b>Video has been submitted successfully</b><br /><br /><a href=\"javascript:window.close();\">Close this window</a> or <a href=\"index.php#downloads\">Check the status of the download</a>");
     } else {
-      die("<b>Something went wrong. You can try to submit the video manually.</b><br /><br /><a href=\"javascript:window.close();\">Close this window</a> or <a href=\"index.php\">Try to submit the download manually</a>");
+      echo("<b>Something went wrong. You can try to submit the video manually.</b><br /><br />");
+      echo("Error: ".$_GET['errors']."<br /><br />");
+      die("<a href=\"javascript:window.close();\">Close this window</a> or <a href=\"index.php\">Try to submit the download manually</a>");
     }
   }
   
