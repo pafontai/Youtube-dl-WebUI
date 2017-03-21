@@ -105,12 +105,15 @@
           $siteset = false;
           $isaudio = false;
           $listpos = "";
+          $playlist = "";
           if (strpos($fileinfo->getFilename(), "_a") !== false)
             $isaudio = true;
           if ($handle) {
             while (($line = fgets($handle)) !== false) {
               if (strpos($line, '[download] Downloading') !== false)
                 $listpos = "(".substr($line, 29).")";
+              if (strpos($line, '[download] Downloading playlist:') !== false)
+                $playlist = substr($line, 33)."<br />";
               if (trim($line) != "")
                 $lastline = $line;
               $verylastline = $line;
@@ -145,7 +148,7 @@
               $type = "audio";
             
             $bjs[] = array(
-              'file' => json_encode($filename),
+              'file' => json_encode($playlist.$filename),
               'site' => json_encode($site),
               'status' => str_replace("\\n", "", json_encode($lastline)),
               'type' => json_encode($type),
@@ -171,12 +174,17 @@
           $siteset = false;
           $isaudio = false;
           $listpos = "";
+          $playlist = "";
           if (strpos($fileinfo->getFilename(), "_a") !== false)
             $isaudio = true;
           if ($handle) {
             while (($line = fgets($handle)) !== false) {
-              if (strpos($line, '[download] Downloading') !== false)
-                $listpos = "(".substr($line, 29).")";
+              if (strpos($line, '[download] Downloading') !== false) {
+                $listpos = substr($line, 29);
+                $listpos = trim(substr($listpos, strpos($listpos, " of")+3));
+              }
+              if (strpos($line, '[download] Downloading playlist:') !== false)
+                $playlist = substr($line, 33);
               $verylastline = $line;
               if (!$siteset) {
                 $siteset = true;
@@ -197,7 +205,8 @@
             $jobstatus = "Completed";
             if (strpos($fileinfo->getFilename(), "_cancelled")!==false)
               $jobstatus = "Cancelled";
-
+            if ($playlist != "")
+              $filename = $playlist." (".$listpos." files)";
             $bjs[] = array(
               'file' => json_encode($filename),
               'site' => json_encode($site),
@@ -217,13 +226,12 @@
       if (!file_exists($file))
         return;
       $outfile = $GLOBALS['config']['logPath']."/".str_replace("pid_", "job_", $fpid);
-      $completed = $GLOBALS['config']['logPath']."/".str_replace("pid_", "ytdl_", $fpid);      
+      $completed = $GLOBALS['config']['logPath']."/".str_replace("pid_", "ytdl_", $fpid)."_cancelled";
       $jpid = trim(file_get_contents($file));
       $pidcmd = trim(file_get_contents('/proc/'.$jpid.'/cmdline'));
       // Check that this really is a youtube-dl process and not a process with the same PID as an old job
       if (strpos($pidcmd, $GLOBALS['config']['youtubedlExe']) !== false)
         shell_exec("kill ".$jpid);
-      
       rename($outfile,$completed);
       unlink($file);
     }

@@ -3,20 +3,20 @@
   if ($config['debug']) {
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL); 
+    error_reporting(E_ALL);
   } else {
     ini_set('display_errors', 0);
     ini_set('display_startup_errors', 0);
-    error_reporting(0); 
+    error_reporting(0);
   }
 
   require_once 'class/Session.php';
   require_once 'class/Downloader.php';
   require_once 'class/FileHandler.php';
-  
+
   $session = Session::getInstance();
   $file = new FileHandler;
-  
+
   if(isset($_GET['jobs']))
   {
     $jsonString = "{ \"jobs\": [";
@@ -31,7 +31,7 @@
             }
     $jsonString = trim($jsonString, ",");
     $jsonString .= "],";
-    
+
     $jsonString .= "\"finished\": [";
     foreach(Downloader::get_finished_background_jobs() as $key)
             {
@@ -48,7 +48,7 @@
     echo $jsonString;
     die();
   }
-  
+
   if(isset($_GET["delete"]))
   {
     $file->delete($_GET["delete"], $_GET["type"]);
@@ -57,7 +57,7 @@
     else
       header("Location: index.php#videos");
   }
-  
+
   if(isset($_GET['kill']) && !empty($_GET['kill']))
   {
     if ($_GET['kill'] === "all")
@@ -66,7 +66,7 @@
       Downloader::kill_one_of_them($_GET['kill']);
     header("Location: index.php#downloads");
   }
-  
+
   if(isset($_GET['clear']) && !empty($_GET['clear']))
   {
     if ($_GET['clear'] === "recent")
@@ -75,40 +75,40 @@
       Downloader::clear_one_finished($_GET['clear']);
     header("Location: index.php#downloads");
   }
-  
+
   if(isset($_POST['urls']) && !empty($_POST['urls']))
   {
     $get_parms = "?";
     $audio_only = false;
     $audio_format = "--audio-format mp3";
     $dl_format = "-f best";
-    
+
     if(isset($_POST['audio']) && !empty($_POST['audio']))
     {
       $audio_only = true;
       $get_parms .= "audio=true&";
     }
-    
+
     if(isset($_POST['audio_format']) && !empty($_POST['audio_format']))
     {
       $audio_format = "--audio-format " . $_POST['audio_format'];
       $get_parms .= "audio_format=".$_POST['audio_format']."&";
     }
-    
+
     if(isset($_POST['format']) && !empty($_POST['format']))
     {
       $dl_format = "-f " . $_POST['format'];
       $get_parms .= "format=".$_POST['format']."&";
     }
-    
+
     $downloader = new Downloader($_POST['urls'], $audio_only, $dl_format, $audio_format);
-    
+
     if(!isset($_SESSION['errors']))
     {
       header("Location: index.php".$get_params."#".$config['redirectAfterSubmit']);
     }
   }
-  
+
   $urlvalue = "";
   if (isset($_GET['url']))
   {
@@ -121,15 +121,15 @@
         $audio_only = true;
       else
         $audio_only = false;
-      
+
       if(isset($_GET['audio_format']) && !empty($_GET['audio_format']))
         $audio_format = "--audio-format " . $_GET['audio_format'];
-    
+
       if(isset($_GET['format']) && !empty($_GET['format']))
         $dl_format = "-f " . $_GET['format'];
-      
+
       $downloader = new Downloader(urldecode($_GET['url']), $audio_only, $dl_format, $audio_format);
-     
+
       if(isset($_SESSION['errors']) && $_SESSION['errors'] > 0)
         header("Location: index.php?submitstatus=error&errors=".implode(", ",$_SESSION['errors']));
       else
@@ -148,12 +148,12 @@
       die("<a href=\"javascript:window.close();\">Close this window</a> or <a href=\"index.php\">Try to submit the download manually</a>");
     }
   }
-  
+
   $siteTheme = $config['siteTheme'];
   if (isset($_GET['theme']))
     $siteTheme = $_GET['theme'];
   require 'views/header.php';
-  
+
   if (@$_GET["audio"]=="true" && !$config['disableExtraction']) {
     $audio_check = " checked=\"checked\"";
     $video_form_style = " style=\"display: none;\"";
@@ -239,7 +239,7 @@
   });
 </script>
 <div class="container" style="margin-bottom: 50px;">
-  
+
   <ul id="mainnav" class="nav nav-pills">
     <li class="active"><a id="home_link" href="#home" data-toggle="tab" aria-expanded="true">Home</a></li>
     <li><a id="dl_link" href="#downloads" data-toggle="tab" aria-expanded="false">Downloading</a></li>
@@ -252,7 +252,7 @@
         <br />
         <h1 style="text-align: center;"><?php echo($config['siteName']); ?></h1><br />
         <?php
-  
+
   if(isset($_SESSION['errors']) && $_SESSION['errors'] > 0)
   {
     foreach ($_SESSION['errors'] as $e)
@@ -261,7 +261,7 @@
              }
   }
   ?>
-        <form id="download-form" class="form-horizontal" action="index.php" method="post">          
+        <form id="download-form" class="form-horizontal" action="index.php" method="post">
           <div class="form-group">
             <div class="col-md-12">
               <input class="form-control" id="url" name="urls"<?php echo($urlvalue); ?> placeholder="Enter the URL to the video you want to download. If you want to enter more that one please separate with a comma." type="text">
@@ -356,7 +356,7 @@
   {
     $i = 0;
     $totalSize = 0;
-    
+
     foreach($files as $f)
             {
               $fileDisplay = "<a href=\"".$file->get_downloads_link().'/'.$f["name"]."\" download>".$f["name"]."</a>";
@@ -400,7 +400,7 @@
   {
     $i = 0;
     $totalSize = 0;
-    
+
     foreach($files as $f)
             {
               $fileDisplay = "<a href=\"".$file->get_downloads_link().'/'.$f["name"]."\" download>".$f["name"]."</a>";
@@ -426,7 +426,7 @@
       <br/>
       <br/>
     </div>
-  </div>  
+  </div>
 </div>
 <script>
   $('#mainnav a').click(function(e) {
