@@ -169,8 +169,8 @@
           $handle = fopen($fileinfo->getPathname(), "r");
           $lastline = "";
           $verylastline = "";
-          $filename = "TBC";
-          $site = "TBC";
+          $filename = "N/A";
+          $site = "N/A";
           $siteset = false;
           $isaudio = false;
           $listpos = "";
@@ -207,6 +207,10 @@
               $jobstatus = "Cancelled";
             if ($playlist != "")
               $filename = $playlist." (".$listpos." files)";
+            if ($filename == "N/A") {
+              $type = "unknown";
+              $jobstatus = "Error";
+            }
             $bjs[] = array(
               'file' => json_encode($filename),
               'site' => json_encode($site),

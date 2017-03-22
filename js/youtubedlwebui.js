@@ -44,9 +44,11 @@ function loadList()
       var liString = "";
       $('#dlcompleted').html("");
       for (var i = 0; i < arrayLength; i++) {
-        liString = '<i class=\"fa fa-video-camera\"></i>';
+        liString = "";
         if (data.finished[i].type == "audio")
           liString = '<i class=\"fa fa-music\"></i>';
+        else if (data.finished[i].type == "video")
+          liString = '<i class=\"fa fa-video-camera\"></i>';
         htmlString += "<tr>";       
         htmlString += "<td style=\"vertical-align: middle;\">"+data.finished[i].site+"</td>";
         htmlString += "<td style=\"vertical-align: middle;\">"+liString+" "+data.finished[i].file+"</td>";
@@ -107,13 +109,15 @@ function helpPanel()
   if(!panelBody .hasClass('panel-collapsed')) {
     panelBody.slideUp();
     panelBody.addClass('panel-collapsed');
+    $('#helplink').html('Click here for Info, Help and to add a Download Bookmarklet to your Browser');
   } else {
     panelBody.slideDown();
     panelBody.removeClass('panel-collapsed');
+    $('#helplink').html('Click here to hide the Info and Help Panel');
   }
 }
 
-function updateBookmarklet()
+function updateBookmarklet(textchanged)
 {
   var audio_format = $('#bml_audio_format').val();
   var video_format = $('#bml_format').val();
@@ -121,6 +125,12 @@ function updateBookmarklet()
   var auto_submit = $('#bml_auto_submit').is(":checked");
   var base_url = $('#bml_base_uri').val();
   var getparm = "?";
+  var bml_text = $('#bml_custom_text').val();
+
+  if (textchanged)
+    $('#bml_use_custom_text').attr("checked", true);
+
+  var use_custom = $('#bml_use_custom_text').is(":checked");
 
   if (audio_extract)
   {
@@ -128,16 +138,24 @@ function updateBookmarklet()
     getparm += "audio_format="+audio_format;
     $('#bml_audio_group').show();
     $('#bml_video_group').hide();
-    $('#cust_bml').html("Download Audio");
+    if (!use_custom)
+      bml_text = "Download Audio";
   } else {
     getparm += "format="+video_format;
     $('#bml_audio_group').hide();
     $('#bml_video_group').show();
-    $('#cust_bml').html("Download Video");
+    if (!use_custom)
+      bml_text = "Download Video";
   }
-  if (auto_submit)
+  if (auto_submit) {
     getparm += "&auto_submit=true";
+    if (!use_custom)
+      bml_text += " (Autostart)";
+  }
   getparm += "&url=";
+  $('#cust_bml').html(bml_text);
+  if (!use_custom)
+    $('#bml_custom_text').val(bml_text);
 
   $('#cust_bml').attr('href', "javascript:(function(){f='"+base_url+getparm+"'+encodeURIComponent(window.location.href);a=function(){if(!window.open(f))location.href=f};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})()");
 }

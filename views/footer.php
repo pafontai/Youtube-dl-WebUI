@@ -1,9 +1,9 @@
-	<footer class="footer" style="position: fixed;bottom: 0;padding: 0;margin: 0;width: 100%;">
+	<footer class="footer" style="max-height: 100%; overflow-y: auto; position: fixed;bottom: 0;padding: 0;margin: 0;width: 100%;">
             <div class="well text-center" style="padding: 0;margin: 0;">
 
-    <div class="panel panel-default" style="margin: 0;">
+    <div class="panel panel-info" style="margin: 0;">
       <div onclick="helpPanel()" style="cursor: pointer;" class="panel-heading">
-        <h3 class="panel-title">Click here for Info and Help</h3>
+        <h3 id="helplink" class="panel-title">Click here for Info, Help and to add a Download Bookmarklet to your Browser</h3>
       </div>
       <div id="helppanel" class="panel-body panel-collapsed" style="display: none;">
         <table class="table table-striped table-hover" style="text-align: left;">
@@ -28,17 +28,17 @@
               <b>How does it work?</b>
             </td>
             <td>
-              Simply paste your video link(s) in the field, select the quality or audio format and click "Download". You can also drag the following links to your bookmarks bar and simply click on the bookmark while watching the video you want to download.<br />
+              Simply paste your video link(s) into the URL field, select the quality or audio format and click "Download". You can also drag the following links to your bookmarks bar and simply click on the bookmark while watching the video you want to download.<br />
               <a href="<?php echo($bookmarkletvideo); ?>" class="btn btn-default btn-xs">Download Video</a>, <a href="<?php echo($bookmarkletmusic); ?>" class="btn btn-default btn-xs">Download Audio</a> or 
               <button data-toggle="modal" data-target="#custom_bookmarklet" class="btn btn-default btn-xs">Click here to create a custom bookmarklet</button></td>
             </td>
           </tr>
           <tr>
             <td>
-              <b>With which sites does it work?</b>
+              <b>Which sites are supported?</b>
             </td>
             <td>
-              <a href="http://rg3.github.io/youtube-dl/supportedsites.html" targe="_blank">Here's</a> a list of the supported sites
+              <a href="http://rg3.github.io/youtube-dl/supportedsites.html" targe="_blank">Here's</a> a list of all supported sites
             </td>
           </tr>
           <tr>
