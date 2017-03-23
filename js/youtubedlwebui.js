@@ -5,42 +5,48 @@ function loadList()
     if (arrayLength==0) {
       $('#dlprogress').html( "<tr><td colspan=\"4\">No downloads in progress.</td></tr>" );
     } else {
-      var htmlString = "";
+      var htmlString = [];
       var liString = "";
       $('#dlprogress').html("");
       for (var i = 0; i < arrayLength; i++) {
         liString = '<i class=\"fa fa-video-camera\"></i>';
         if (data.jobs[i].type == "audio")
           liString = '<i class=\"fa fa-music\"></i>';
-        htmlString += "<tr>";       
-        htmlString += "<td style=\"vertical-align: middle;\">"+data.jobs[i].site+"</td>";
-        htmlString += "<td style=\"vertical-align: middle;\">"+liString+" "+data.jobs[i].file+"</td>";
-        htmlString += "<td style=\"vertical-align: middle;\">"+data.jobs[i].status+"</td>";
-        htmlString += "<td style=\"vertical-align: middle;\">";
-        htmlString += "<div class=\"btn-group\">";
-        htmlString += "<a style=\"width: 100px;\" data-href=\"?kill="+data.jobs[i].pid+"\" data-toggle=\"modal\" data-target=\"#confirm-delete\" class=\"btn btn-danger btn-xs\">Stop</a>";
-        htmlString += "</div>";
-        htmlString += "</tr>";       
+        htmlString.push("<tr>");
+        htmlString.push("<td style=\"vertical-align: middle;\">"+data.jobs[i].site+"</td>");
+        htmlString.push("<td style=\"vertical-align: middle;\">"+liString+" "+data.jobs[i].file);
+        var urls = data.jobs[i].url.split(",");
+        var urlcount = urls.length;
+        for (var j = 0; j < urlcount; j++) {
+          htmlString.push("<br /><a href=\""+urls[j]+"\">"+urls[j]+"</a>");
+        }
+        htmlString.push("</td>");
+        htmlString.push("<td style=\"vertical-align: middle;\">"+data.jobs[i].status+"</td>");
+        htmlString.push("<td style=\"vertical-align: middle;\">");
+        htmlString.push("<div class=\"btn-group\">");
+        htmlString.push("<a style=\"width: 100px;\" data-href=\"?kill="+data.jobs[i].pid+"\" data-toggle=\"modal\" data-target=\"#confirm-delete\" class=\"btn btn-danger btn-xs\">Stop</a>");
+        htmlString.push("</div>");
+        htmlString.push("</tr>");
       }
-      htmlString += "<tr>";
-      htmlString += "<td></td>";
-      htmlString += "<td></td>";
-      htmlString += "<td></td>";
-      htmlString += "<td>";
-      htmlString += "<div class=\"btn-group\">";
-      htmlString += "<button id=\"killallbutton\" style=\"width: 100px;\" class=\"btn btn-danger btn-xs\" data-href=\"?kill=all\" data-toggle=\"modal\" data-target=\"#confirm-delete\">";
-      htmlString += "Stop All";
-      htmlString += "</button>";
-      htmlString += "</div>";
-      htmlString += "</td>";
-      htmlString += "</tr>";
-      $('#dlprogress').html(htmlString);
+      htmlString.push("<tr>");
+      htmlString.push("<td></td>");
+      htmlString.push("<td></td>");
+      htmlString.push("<td></td>");
+      htmlString.push("<td>");
+      htmlString.push("<div class=\"btn-group\">");
+      htmlString.push("<button id=\"killallbutton\" style=\"width: 100px;\" class=\"btn btn-danger btn-xs\" data-href=\"?kill=all\" data-toggle=\"modal\" data-target=\"#confirm-delete\">");
+      htmlString.push("Stop All");
+      htmlString.push("</button>");
+      htmlString.push("</div>");
+      htmlString.push("</td>");
+      htmlString.push("</tr>");
+      $('#dlprogress').html(htmlString.join("\n"));
     }
     arrayLength = data.finished.length;
     if (arrayLength==0) {
       $('#dlcompleted').html( "<tr><td colspan=\"4\">No completed downloads on record.</td></tr>" );
     } else {
-      var htmlString = "";
+      var htmlString = [];
       var liString = "";
       $('#dlcompleted').html("");
       for (var i = 0; i < arrayLength; i++) {
@@ -49,35 +55,42 @@ function loadList()
           liString = '<i class=\"fa fa-music\"></i>';
         else if (data.finished[i].type == "video")
           liString = '<i class=\"fa fa-video-camera\"></i>';
-        htmlString += "<tr>";       
-        htmlString += "<td style=\"vertical-align: middle;\">"+data.finished[i].site+"</td>";
-        htmlString += "<td style=\"vertical-align: middle;\">"+liString+" "+data.finished[i].file+"</td>";
-        htmlString += "<td style=\"vertical-align: middle;\">"+data.finished[i].status+"</td>";
-        htmlString += "<td style=\"vertical-align: middle;\">";
-        htmlString += "<div class=\"btn-group\">";
-        var buttonWidth = "100px;";
+        htmlString.push("<tr>");       
+        htmlString.push("<td style=\"vertical-align: middle;\">"+data.finished[i].site+"</td>");
+        htmlString.push("<td style=\"vertical-align: middle;\">"+liString+" "+data.finished[i].file);
+        var urls = data.finished[i].url.split(",");
+        var urlcount = urls.length;
+        for (var j = 0; j < urlcount; j++) {
+          htmlString.push("<br /><a href=\""+urls[j]+"\">"+urls[j]+"</a>");
+        }
+        htmlString.push("</td>");
+        htmlString.push("<td style=\"vertical-align: middle;\">"+data.finished[i].status+"</td>");
+        htmlString.push("<td style=\"vertical-align: middle;\">");
+        htmlString.push("<div class=\"btn-group\">");
+        var buttonWidth = "80px;";
         if (data.logURL != "") {
           buttonWidth = "60px;";
-          htmlString += "<a href=\""+data.logURL+"/"+data.finished[i].pid+"\" style=\"width: 40px;\" target=\"_blank\" class=\"btn btn-default btn-xs\">Log</a>";
+          htmlString.push("<a href=\""+data.logURL+"/"+data.finished[i].pid+"\" style=\"width: 40px;\" target=\"_blank\" class=\"btn btn-default btn-xs\">Log</a>");
         }
-        htmlString += "<a style=\"width: "+buttonWidth+"\" data-href=\"?clear="+data.finished[i].pid+"\" data-toggle=\"modal\" data-target=\"#confirm-delete\" class=\"btn btn-danger btn-xs\">Remove</a>";
-        htmlString += "</div>";
-        htmlString += "</td>";
-        htmlString += "</tr>";       
+        htmlString.push("<a style=\"width: "+buttonWidth+"\" href=\"?restart="+data.finished[i].pid+"\" class=\"btn btn-success btn-xs\">Restart</a>");
+        htmlString.push("<a style=\"width: "+buttonWidth+"\" data-href=\"?clear="+data.finished[i].pid+"\" data-toggle=\"modal\" data-target=\"#confirm-delete\" class=\"btn btn-danger btn-xs\">Remove</a>");
+        htmlString.push("</div>");
+        htmlString.push("</td>");
+        htmlString.push("</tr>");       
       }
-      htmlString += "<tr>";
-      htmlString += "<td></td>";
-      htmlString += "<td></td>";
-      htmlString += "<td></td>";
-      htmlString += "<td>";
-      htmlString += "<div class=\"btn-group\">";
-      htmlString += "<button id=\"clearallbutton\" style=\"width: 100px;\" class=\"btn btn-danger btn-xs\" data-href=\"?clear=recent\" data-toggle=\"modal\" data-target=\"#confirm-delete\">";
-      htmlString += "Remove All";
-      htmlString += "</button>";
-      htmlString += "</div>";
-      htmlString += "</td>";
-      htmlString += "</tr>";
-      $('#dlcompleted').html(htmlString);
+      htmlString.push("<tr>");
+      htmlString.push("<td></td>");
+      htmlString.push("<td></td>");
+      htmlString.push("<td></td>");
+      htmlString.push("<td>");
+      htmlString.push("<div class=\"btn-group\">");
+      htmlString.push("<button id=\"clearallbutton\" style=\"width: 160px;\" class=\"btn btn-danger btn-xs\" data-href=\"?clear=recent\" data-toggle=\"modal\" data-target=\"#confirm-delete\">");
+      htmlString.push("Remove All");
+      htmlString.push("</button>");
+      htmlString.push("</div>");
+      htmlString.push("</td>");
+      htmlString.push("</tr>");
+      $('#dlcompleted').html(htmlString.join("\n"));
     }
   }, "json");
 } 

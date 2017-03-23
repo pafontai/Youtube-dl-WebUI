@@ -26,7 +26,8 @@
               $jsonString .= "\"status\": ".$key['status'].", ";
               $jsonString .= "\"site\": ".$key['site'].", ";
               $jsonString .= "\"type\": ".$key['type'].", ";
-              $jsonString .= "\"pid\": ".$key['pid'];
+              $jsonString .= "\"pid\": ".$key['pid'].", ";
+              $jsonString .= "\"url\": ".$key['url'];
               $jsonString .= "},";
             }
     $jsonString = trim($jsonString, ",");
@@ -39,7 +40,8 @@
               $jsonString .= "\"status\": ".$key['status'].", ";
               $jsonString .= "\"site\": ".$key['site'].", ";
               $jsonString .= "\"type\": ".$key['type'].", ";
-              $jsonString .= "\"pid\": ".$key['pid'];
+              $jsonString .= "\"pid\": ".$key['pid'].", ";
+              $jsonString .= "\"url\": ".$key['url'];
               $jsonString .= "},";
             }
     $jsonString = trim($jsonString, ",");
@@ -73,6 +75,12 @@
       Downloader::clear_finished();
     else
       Downloader::clear_one_finished($_GET['clear']);
+    header("Location: index.php#downloads");
+  }
+  
+  if(isset($_GET['restart']) && !empty($_GET['restart']))
+  {
+    Downloader::restart_download($_GET['restart']);
     header("Location: index.php#downloads");
   }
   
@@ -330,7 +338,7 @@
               <th style="width: 10%; height:35px;">Site/Type</th>
               <th>File/Playlist</th>
               <th style="width: 25%;">Status</th>
-              <th style="width: 120px;">Actions</th>
+              <th style="width: 180px;">Actions</th>
             </tr>
           </thead>
           <tbody id="dlcompleted">

@@ -83,10 +83,16 @@
             continue;
           }
           $jpid = trim(file_get_contents($fileinfo->getPathname()));
+          $ytcmd = explode("\n", $jpid)[1];
+          $urltext = explode("\n", $jpid)[2];
+          $jpid = explode("\n", $jpid)[0];
+
           if (!file_exists("/proc/".$jpid)){
             // The job has terminated
             unlink($fileinfo->getPathname());
             rename($outfile, $completefile);
+            file_put_contents($completefile, "[ytcmd] ". $ytcmd."\n", FILE_APPEND);
+            file_put_contents($completefile, "[yturl] ". $urltext."\n", FILE_APPEND);
             continue;
           }
           $pidcmd = trim(file_get_contents('/proc/'.$jpid.'/cmdline'));
@@ -95,6 +101,8 @@
             // The job has terminated
             unlink($fileinfo->getPathname());
             rename($outfile, $completefile);
+            file_put_contents($completefile, "[ytcmd] ". $ytcmd."\n", FILE_APPEND);
+            file_put_contents($completefile, "[yturl] ". $urltext."\n", FILE_APPEND);
             continue;
           }
           $handle = fopen($outfile, "r");
@@ -146,13 +154,14 @@
             $type = "video";
             if ($isaudio)
               $type = "audio";
-            
+
             $bjs[] = array(
               'file' => json_encode($playlist.$filename),
               'site' => json_encode($site),
               'status' => str_replace("\\n", "", json_encode($lastline)),
               'type' => json_encode($type),
-              'pid' => json_encode($fileinfo->getFilename())
+              'pid' => json_encode($fileinfo->getFilename()),
+              'url' => json_encode($urltext)
             );
           }
         }
@@ -175,6 +184,7 @@
           $isaudio = false;
           $listpos = "";
           $playlist = "";
+          $urltext = "";
           if (strpos($fileinfo->getFilename(), "_a") !== false)
             $isaudio = true;
           if ($handle) {
@@ -192,6 +202,9 @@
                 $site = str_replace("[", "", $site);
                 $site = str_replace("]", "", $site);
                 $site = ucfirst($site);
+              }
+              if (strpos($line, '[yturl]') !== false) {
+                $urltext = substr($line, 8);
               }
               if (strpos($line, 'Destination') !== false) {
                 $pos = strrpos($line, '/');
@@ -216,7 +229,8 @@
               'site' => json_encode($site),
               'status' => str_replace("\\n", "", json_encode($jobstatus)),
               'type' => json_encode($type),
-              'pid' => json_encode($fileinfo->getFilename())
+              'pid' => json_encode($fileinfo->getFilename()),
+              'url' => json_encode($urltext)
             );
           }
         }
@@ -232,25 +246,33 @@
       $outfile = $GLOBALS['config']['logPath']."/".str_replace("pid_", "job_", $fpid);
       $completed = $GLOBALS['config']['logPath']."/".str_replace("pid_", "ytdl_", $fpid)."_cancelled";
       $jpid = trim(file_get_contents($file));
+      $ytcmd = explode("\n", $jpid)[1];
+      $urltext = explode("\n", $jpid)[2];
+      $jpid = explode("\n", $jpid)[0];
+
       $pidcmd = trim(file_get_contents('/proc/'.$jpid.'/cmdline'));
       // Check that this really is a youtube-dl process and not a process with the same PID as an old job
       if (strpos($pidcmd, $GLOBALS['config']['youtubedlExe']) !== false)
         shell_exec("kill ".$jpid);
       rename($outfile,$completed);
+      file_put_contents($completed, "[ytcmd] ". $ytcmd."\n", FILE_APPEND);
+      file_put_contents($completed, "[yturl] ". $urltext."\n", FILE_APPEND);
       unlink($file);
     }
     
     public static function kill_them_all()
     {
-      foreach(glob($GLOBALS['config']['logPath'].'/job_*') as $file)
-      {
-        $pos = strrpos($file, "job_");
-        $completed = substr_replace($file, "ytdl_", $pos, strlen("job_"))."_cancelled";
-        rename($file,$completed);
-      }
-
       foreach(glob($GLOBALS['config']['logPath'].'/pid_*') as $file)
       {
+        $jobfile = $str_replace("pid_", "job_", $file);
+        $pos = strrpos($jobfile, "job_");
+        $completed = substr_replace($jobfile, "ytdl_", $pos, strlen("job_"))."_cancelled";
+        rename($jobfile,$completed);
+        $jpid = trim(file_get_contents($file));
+        $ytcmd = explode("\n", $jpid)[1];
+        $jpid = explode("\n", $jpid)[0];
+        file_put_contents($completed, "[ytcmd] ". $ytcmd."\n", FILE_APPEND);
+        file_put_contents($completed, "[yturl] ". $urltext."\n", FILE_APPEND);
         unlink($file);
       }
       
@@ -273,6 +295,41 @@
           unlink($file);
         }
       }
+    }
+
+    public static function restart_download($fpid) {
+      $handle = fopen($GLOBALS['config']['logPath'].'/'.$fpid, "r");
+      $ytcmd = "";
+      $urltext = "";
+      if ($handle) {
+        while (($line = fgets($handle)) !== false) {
+          if (strpos($line, '[ytcmd]') !== false) {
+            $ytcmd = substr($line, 8);
+          }
+          if (strpos($line, '[yturl]') !== false) {
+            $urltext = substr($line, 8);
+          }
+        }
+        fclose($handle);
+      }
+      if ($ytcmd == "") {
+        $_SESSION['errors'] = "Could not restart. Log file corrupt.";
+        return;
+      }
+      $suffix = "";
+      if (strpos($fpid, "_a") !== false)
+        $suffix = "_a";
+
+      do {
+        $fno = "job_".uniqid().$suffix;
+      } while (file_exists($GLOBALS['config']['logPath']."/".$fno));
+
+      $fnp = str_replace("job_", "pid_", $fno);
+      $ytcmd = trim($ytcmd);
+      $cmd = $ytcmd." > ".$GLOBALS['config']['logPath']."/".$fno." & echo $! > ".$GLOBALS['config']['logPath']."/".$fnp;
+      passthru($cmd);
+      file_put_contents($GLOBALS['config']['logPath']."/".$fnp, $ytcmd."\n", FILE_APPEND);
+      file_put_contents($GLOBALS['config']['logPath']."/".$fnp, $urltext."\n", FILE_APPEND);
     }
 
     public static function clear_one_finished($fpid)
@@ -326,11 +383,11 @@
       }
     }
 
-    private function getFileName($prefix, $suffix)
+    private function getUniqueFileName($prefix, $suffix, $path)
     {
       do {
         $uid = $prefix.uniqid().$suffix;
-      } while (file_exists($uid));
+      } while (file_exists($path.$uid));
       return $uid;
     }
     
@@ -348,17 +405,22 @@
         $cmd .= " ".$this->audio_format;
         $suffix = "_a";
       }
-      $fno = $this->getFileName("job_",$suffix);
+      $fno = $this->getUniqueFileName("job_",$suffix,$this->config['logPath']."/");
       $fnp = str_replace("job_", "pid_", $fno);
+      $urltext = "";
       foreach($this->urls as $url)
               {
                 $cmd .= " ".escapeshellarg($url);
+                $urltext .= $url .",";
               }
-      
+      $urltext = trim($urltext, ",");
       $cmd .= " --restrict-filenames"; // --restrict-filenames is for specials chars
       $cmd .= " --ignore-errors";
+      $logcmd = $cmd;
       $cmd .= " > ".$this->config['logPath']."/".$fno." & echo $! > ".$this->config['logPath']."/".$fnp;
       passthru($cmd);
+      file_put_contents($this->config['logPath']."/".$fnp, $logcmd."\n", FILE_APPEND);
+      file_put_contents($this->config['logPath']."/".$fnp, $urltext."\n", FILE_APPEND);
     }
   }
     ?>
