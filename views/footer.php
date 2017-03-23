@@ -46,7 +46,7 @@
               <b>How can I download the video/audio to my computer?</b>
             </td>
             <td>
-              Go to <a href="#vidlist" onclick="$('#vid_link').click()" data-toggle="tab" aria-expanded="false">List of videos</a> or <a href="#songlist" onclick="$('#music_link').click()" data-toggle="tab" aria-expanded="false">List of songs</a> >> choose one >> right click on the link >> "Save target as ..." or go to the share \\zz9\Download in your file manager.
+              Go to <a href="#vidlist" onclick="$('#vid_link').click()" data-toggle="tab" aria-expanded="false">List of videos</a> or <a href="#songlist" onclick="$('#music_link').click()" data-toggle="tab" aria-expanded="false">List of songs</a> >> choose one >> right click on the link >> "Save target as ..."
             </td>
           </tr>
           <tr>
