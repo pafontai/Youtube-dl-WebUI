@@ -99,35 +99,15 @@
             <th style="min-width:80px">Size</th>
             <?php if ($config['allowFileDelete']): ?>
               <th style="min-width:110px">Actions</th>
+            <?php else: ?>
+              <th></th>
             <?php endif; ?>
           </tr>
         </thead>
-        <tbody>
-<?php if(!empty($videofiles)): ?>
-  <?php foreach($videofiles as $f): ?>
-      <tr>
-        <td>
-          <?php if ($config['downloadPath'] == ""): ?>
-            <?php echo ($f["name"]); ?>
-          <?php else: ?>
-            <a href="<?php echo ($file->get_downloads_link().'/'.$f["name"]); ?>" download><?php echo ($f["name"]); ?></a>
-          <?php endif; ?>
-        </td>
-        <td>
-          <?php echo ($f["size"]); ?>
-        </td>
-        <?php if ($config['allowFileDelete']): ?>
-          <td>
-            <a data-href="?delete=<?php echo (urlencode($f["name"])); ?>&type=v" data-toggle="modal" data-target="#confirm-delete" class="btn btn-danger btn-xs">Delete</a>
-          </td>
-        <?php endif; ?>
-      </tr>
-  <?php endforeach; ?>
-<?php else: ?>
-    <tr>
-      <td colspan="3">No videos found.</td>
-    </tr>
-<?php endif; ?>
+        <tbody id="videofiles">
+          <tr>
+            <td colspan="3">Getting videos please wait...</td>
+          </tr>
         </tbody>
       </table>
       <br/>
@@ -143,35 +123,15 @@
             <th style="min-width:80px">Size</th>
             <?php if ($config['allowFileDelete']): ?>
               <th style="min-width:110px">Actions</th>
+            <?php else: ?>
+              <th></th>
             <?php endif; ?>
           </tr>
         </thead>
-        <tbody>
-<?php if(!empty($musicfiles)): ?>
-  <?php foreach($musicfiles as $f): ?>
-      <tr>
-        <td>
-          <?php if ($config['downloadPath'] == ""): ?>
-            <?php echo ($f["name"]); ?>
-          <?php else: ?>
-            <a href="<?php echo ($file->get_downloads_link().'/'.$f["name"]); ?>" download><?php echo ($f["name"]); ?></a>
-          <?php endif; ?>
-        </td>
-        <td>
-          <?php echo ($f["size"]); ?>
-        </td>
-        <?php if ($config['allowFileDelete']): ?>
-          <td>
-            <a data-href="?delete=<?php echo (urlencode($f["name"])); ?>&type=m" data-toggle="modal" data-target="#confirm-delete" class="btn btn-danger btn-xs">Delete</a>
-          </td>
-        <?php endif; ?>
-      </tr>
-  <?php endforeach; ?>
-<?php else: ?>
-    <tr>
-      <td colspan="3">No music found.</td>
-    </tr>
-<?php endif; ?>
+        <tbody id="musicfiles">
+          <tr>
+            <td colspan="3">Getting music please wait...</td>
+          </tr>
         </tbody>
       </table>
       <br/>

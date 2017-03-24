@@ -42,6 +42,7 @@ function loadList()
       htmlString.push("</tr>");
       $('#dlprogress').html(htmlString.join("\n"));
     }
+    
     arrayLength = data.finished.length;
     if (arrayLength==0) {
       $('#dlcompleted').html( "<tr><td colspan=\"4\">No completed downloads on record.</td></tr>" );
@@ -91,6 +92,38 @@ function loadList()
       htmlString.push("</td>");
       htmlString.push("</tr>");
       $('#dlcompleted').html(htmlString.join("\n"));
+    }
+    
+    var arrayLength = data.videos.length;
+    if (arrayLength==0) {
+      $('#videofiles').html( "<tr><td colspan=\"3\">No videos.</td></tr>" );
+    } else {
+      var htmlString = [];
+      $('#videofiles').html("");
+      for (var i = 0; i < arrayLength; i++) {
+        htmlString.push("<tr>");
+        htmlString.push("<td>"+data.videos[i].file+"</td>");
+        htmlString.push("<td>"+data.videos[i].size+"</td>");
+        htmlString.push("<td>"+data.videos[i].deleteurl+"</td>");
+        htmlString.push("</tr>");
+      }
+      $('#videofiles').html(htmlString.join("\n"));
+    }
+    
+    var arrayLength = data.music.length;
+    if (arrayLength==0) {
+      $('#musicfiles').html( "<tr><td colspan=\"3\">No music.</td></tr>" );
+    } else {
+      var htmlString = [];
+      $('#musicfiles').html("");
+      for (var i = 0; i < arrayLength; i++) {
+        htmlString.push("<tr>");
+        htmlString.push("<td>"+data.music[i].file+"</td>");
+        htmlString.push("<td>"+data.music[i].size+"</td>");
+        htmlString.push("<td>"+data.music[i].deleteurl+"</td>");
+        htmlString.push("</tr>");
+      }
+      $('#musicfiles').html(htmlString.join("\n"));
     }
   }, "json");
 } 

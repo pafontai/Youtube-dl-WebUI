@@ -23,6 +23,8 @@
   // Return JSON with all jobs currently running and jobs history
   if(isset($_GET['jobs']))
   {
+    $videofiles = $file->listVideos();
+    $musicfiles = $file->listMusics();
     $jsonString = "{ \"jobs\": [";
     foreach(Downloader::get_current_background_jobs() as $key)
             {
@@ -50,6 +52,42 @@
             }
     $jsonString = trim($jsonString, ",");
     $jsonString .= "],";
+
+    $jsonString .= "\"videos\": [";
+    foreach($videofiles as $f)
+            {
+              $deleteurl = "";
+              if ($config['allowFileDelete'])
+                $deleteurl = '<a data-href="?delete='.urlencode($f["name"]).'&type=v" data-toggle="modal" data-target="#confirm-delete" class="btn btn-danger btn-xs">Delete</a>';
+              $fileurl = $f["name"];
+              if ($config['downloadPath'] != "")
+                $fileurl = '<a href="'.$file->get_downloads_link().'/'.$f["name"].'" download>'.$f["name"].'</a>';
+              $jsonString .= "{ \"file\": ".json_encode($fileurl).", ";
+              $jsonString .= "\"size\": ".json_encode($f["size"]).", ";
+              $jsonString .= "\"deleteurl\": ".json_encode($deleteurl);
+              $jsonString .= "},";
+            }
+            
+    $jsonString = trim($jsonString, ",");
+    $jsonString .= "],";
+    $jsonString .= "\"music\": [";
+    foreach($musicfiles as $f)
+            {
+              $deleteurl = "";
+              if ($config['allowFileDelete'])
+                $deleteurl = '<a data-href="?delete='.urlencode($f["name"]).'&type=m" data-toggle="modal" data-target="#confirm-delete" class="btn btn-danger btn-xs">Delete</a>';
+              $fileurl = $f["name"];
+              if ($config['downloadPath'] != "")
+                $fileurl = '<a href="'.$file->get_downloads_link().'/'.$f["name"].'" download>'.$f["name"].'</a>';
+              $jsonString .= "{ \"file\": ".json_encode($fileurl).", ";
+              $jsonString .= "\"size\": ".json_encode($f["size"]).", ";
+              $jsonString .= "\"deleteurl\": ".json_encode($deleteurl);
+              $jsonString .= "},";
+            }
+    $jsonString = trim($jsonString, ",");
+    $jsonString .= "],";
+
+
     $jsonString .= "\"logURL\": ".json_encode($config['logURL'])." }";
     echo $jsonString;
     die();
@@ -198,8 +236,6 @@
   require_once 'views/popup.confirm.php';
   
   // Main part of website
-  $videofiles = $file->listVideos();
-  $musicfiles = $file->listMusics();
   require_once 'views/part.main.php';
 
   // Show footer with help panel
