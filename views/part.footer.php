@@ -1,3 +1,4 @@
+<?php if (!isset($GLOBALS['config'])) die("No direct script access"); ?>
 	<footer class="footer" style="max-height: 100%; overflow-y: auto; position: fixed;bottom: 0;padding: 0;margin: 0;width: 100%;">
             <div class="well text-center" style="padding: 0;margin: 0;">
 

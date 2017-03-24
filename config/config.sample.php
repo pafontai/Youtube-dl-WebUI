@@ -111,6 +111,13 @@ return array(
   'keepPartialFiles' => false,
 
   /**
+   * Specify if users can delete downloaded music and video files 
+   *
+   * 'allowFileDelete' => true
+   */
+  'allowFileDelete' => true,
+
+  /**
    * If set to true, the script will output all errors. 
    * DO NOT USE THIS IN PRODUCTION ON OUTSIDE FACING WEBSITES
    *

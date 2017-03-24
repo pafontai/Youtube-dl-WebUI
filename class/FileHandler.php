@@ -53,32 +53,14 @@ class FileHandler
 		return $musics;
 	}
 
-	public function delete($id, $type)
+	public function delete($id)
 	{
-		$folder = $this->get_downloads_folder().'/';
-		$i = 0;
-
-		if($type === 'v')
-		{
-			$exts = $this->videos_ext;
-		}
-		elseif($type === 'm')
-		{
-			$exts = $this->musics_ext;
-		}
-		else
-		{
-			return;
-		}
-
-		foreach(glob($folder.'*'.$exts, GLOB_BRACE) as $file)
-		{
-			if($i == $id)
-			{
-				unlink($file);
-			}
-			$i++;
-		}
+		$file = $this->get_downloads_folder().'/'.$id;
+                if (file_exists($file)) {
+                  unlink($file);
+                } else {
+                  $_SESSION['errors'] = "File does not exist";
+                }
 	}
 
 	private function outuput_folder_exists()
