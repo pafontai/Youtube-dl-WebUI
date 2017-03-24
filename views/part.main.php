@@ -1,4 +1,5 @@
-<?php if (!isset($GLOBALS['config'])) die("No direct script access"); ?>
+<?php if (!isset($GLOBALS['config'])) { die("No direct script access");
+} ?>
 <div class="container" style="margin-bottom: 50px;">
   <ul id="mainnav" class="nav nav-pills">
     <li class="active"><a id="home_link" href="#home" data-toggle="tab" aria-expanded="true">Home</a></li>
@@ -11,10 +12,10 @@
       <div class="row">
         <br />
         <h1 style="text-align: center;"><?php echo($config['siteName']); ?></h1><br />
-<?php if(isset($_SESSION['errors']) && $_SESSION['errors'] > 0): ?>
-  <?php foreach ($_SESSION['errors'] as $e): ?>
+<?php if(isset($_SESSION['errors']) && $_SESSION['errors'] > 0) : ?>
+    <?php foreach ($_SESSION['errors'] as $e): ?>
     <div class="alert alert-warning" role="alert"><?php echo ($e); ?></div>
-  <?php endforeach; ?>
+    <?php endforeach; ?>
 <?php endif; ?>
         <form id="download-form" class="form-horizontal" action="index.php" method="post">          
           <div class="form-group">
@@ -97,7 +98,7 @@
           <tr>
             <th style="min-width:800px; height:35px">File</th>
             <th style="min-width:80px">Size</th>
-            <?php if ($config['allowFileDelete']): ?>
+            <?php if ($config['allowFileDelete']) : ?>
               <th style="min-width:110px">Actions</th>
             <?php else: ?>
               <th></th>
@@ -121,7 +122,7 @@
           <tr>
             <th style="min-width:800px; height:35px">File</th>
             <th style="min-width:80px">Size</th>
-            <?php if ($config['allowFileDelete']): ?>
+            <?php if ($config['allowFileDelete']) : ?>
               <th style="min-width:110px">Actions</th>
             <?php else: ?>
               <th></th>

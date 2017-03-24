@@ -1,4 +1,5 @@
-<?php if (!isset($GLOBALS['config'])) die("No direct script access"); ?>
+<?php if (!isset($GLOBALS['config'])) { die("No direct script access");
+} ?>
 <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog" style="z-index: 10000;">
     <div class="modal-content">

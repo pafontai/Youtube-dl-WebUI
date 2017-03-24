@@ -1,5 +1,6 @@
-<?php if (!isset($GLOBALS['config'])) die("No direct script access"); ?>
-	<footer class="footer" style="max-height: 100%; overflow-y: auto; position: fixed;bottom: 0;padding: 0;margin: 0;width: 100%;">
+<?php if (!isset($GLOBALS['config'])) { die("No direct script access");
+} ?>
+    <footer class="footer" style="max-height: 100%; overflow-y: auto; position: fixed;bottom: 0;padding: 0;margin: 0;width: 100%;">
             <div class="well text-center" style="padding: 0;margin: 0;">
 
     <div class="panel panel-info" style="margin: 0;">
@@ -13,7 +14,7 @@
               <b>Free space:</b>
             </td>
             <td>
-              <?php echo $file->free_space(); ?>iB
+                <?php echo $file->free_space(); ?>iB
             </td>
           </tr>
           <tr>
@@ -21,7 +22,7 @@
               <b>Download folder:</b>
             </td>
             <td>
-              <?php echo $file->get_downloads_folder(); ?>
+                <?php echo $file->get_downloads_folder(); ?>
             </td>
           </tr>
           <tr>
@@ -65,4 +66,3 @@
         </footer>
     </body>
 </html>
-

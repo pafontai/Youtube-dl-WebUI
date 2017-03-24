@@ -1,4 +1,5 @@
-<?php if (!isset($GLOBALS['config'])) die("No direct script access"); ?>
+<?php if (!isset($GLOBALS['config'])) { die("No direct script access");
+} ?>
 <!DOCTYPE html>
 <html>
   <head>

@@ -28,7 +28,7 @@ return array(
    *
    * 'disableExtraction' => false
    */
-	'disableExtraction' => false,
+    'disableExtraction' => false,
   
   /**
    * Set the maximum allowed simultaneous download (i.e. instances
@@ -37,7 +37,7 @@ return array(
    *
    * 'max-dl' => 3
    */
-	'max_dl' => 3,
+    'max_dl' => 3,
    
   /**
    * Specify the tab to redirect to after submitting a download URL.
@@ -56,7 +56,7 @@ return array(
    * e.g.
    * 'outputFolder' => '/var/www/tubedl/download'
    */
-	'outputFolder' => '/var/www/tubedl/download',
+    'outputFolder' => '/var/www/tubedl/download',
   
   /**
    * The web accessible path to you download folder. This has to be a
