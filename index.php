@@ -141,7 +141,7 @@ if(isset($_GET['restart']) && !empty($_GET['restart'])) {
 if(isset($_POST['urls']) && !empty($_POST['urls'])) {
     $get_parms = "?";
     $audio_only = false;
-    $audio_format = "--audio-format mp3";
+    $audio_format = "--audio-format mp3 --audio-quality 0";
     $dl_format = "-f best";
     
     if(isset($_POST['audio']) && !empty($_POST['audio'])) {
@@ -150,7 +150,7 @@ if(isset($_POST['urls']) && !empty($_POST['urls'])) {
     }
     
     if(isset($_POST['audio_format']) && !empty($_POST['audio_format'])) {
-        $audio_format = "--audio-format " . $_POST['audio_format'];
+        $audio_format = "--audio-format " . $_POST['audio_format'] . " --audio-quality 0";
         $get_parms .= "audio_format=".$_POST['audio_format']."&";
     }
     
@@ -172,7 +172,7 @@ if(isset($_POST['urls']) && !empty($_POST['urls'])) {
 if (isset($_GET['url'])) {
     $urlvalue = " value=\"".urldecode($_GET['url'])."\"";
     if (isset($_GET['auto_submit'])) {
-        $audio_format = "--audio-format mp3";
+        $audio_format = "--audio-format mp3 --audio-quality 0";
         $dl_format = "-f best";
         if (isset($_GET["audio"]) && $_GET["audio"] == "true") {
             $audio_only = true;
@@ -181,7 +181,7 @@ if (isset($_GET['url'])) {
         }
       
         if(isset($_GET['audio_format']) && !empty($_GET['audio_format'])) {
-            $audio_format = "--audio-format " . $_GET['audio_format'];
+            $audio_format = "--audio-format " . $_GET['audio_format'] . " --audio-quality 0";
         }
     
         if(isset($_GET['format']) && !empty($_GET['format'])) {
