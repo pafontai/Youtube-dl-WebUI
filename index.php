@@ -1,5 +1,5 @@
 <?php
-  $config = include_once 'config/config.php';
+$config = include_once 'config/config.php';
 if ($config['debug']) {
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
@@ -9,95 +9,91 @@ if ($config['debug']) {
     ini_set('display_startup_errors', 0);
     error_reporting(0); 
 }
-  $siteTheme = $config['siteTheme'];
+$siteTheme = $config['siteTheme'];
 if (isset($_GET['theme'])) {
     $siteTheme = $_GET['theme'];
 }
 
-  require_once 'class/Session.php';
-  require_once 'class/Downloader.php';
-  require_once 'class/FileHandler.php';
+require_once 'class/Session.php';
+require_once 'class/Downloader.php';
+require_once 'class/FileHandler.php';
   
-  $session = Session::getInstance();
-  $file = new FileHandler;
+$session = Session::getInstance();
+$file = new FileHandler;
   
-  // Return JSON with all jobs currently running and jobs history
+// Return JSON with all jobs currently running and jobs history
 if(isset($_GET['jobs'])) {
     $videofiles = $file->listVideos();
     $musicfiles = $file->listMusics();
     $jsonString = "{ \"jobs\": [";
-    foreach(Downloader::get_current_background_jobs() as $key)
-        {
-              $jsonString .= "{ \"file\": ".$key['file'].", ";
-              $jsonString .= "\"status\": ".$key['status'].", ";
-              $jsonString .= "\"site\": ".$key['site'].", ";
-              $jsonString .= "\"type\": ".$key['type'].", ";
-              $jsonString .= "\"pid\": ".$key['pid'].", ";
-              $jsonString .= "\"url\": ".$key['url'];
-              $jsonString .= "},";
+    foreach(Downloader::get_current_background_jobs() as $key) {
+        $jsonString .= "{ \"file\": ".$key['file'].", ";
+        $jsonString .= "\"status\": ".$key['status'].", ";
+        $jsonString .= "\"site\": ".$key['site'].", ";
+        $jsonString .= "\"type\": ".$key['type'].", ";
+        $jsonString .= "\"pid\": ".$key['pid'].", ";
+        $jsonString .= "\"url\": ".$key['url'];
+        $jsonString .= "},";
     }
     $jsonString = trim($jsonString, ",");
     $jsonString .= "],";
     
     $jsonString .= "\"finished\": [";
-    foreach(Downloader::get_finished_background_jobs() as $key)
-        {
-              $jsonString .= "{ \"file\": ".$key['file'].", ";
-              $jsonString .= "\"status\": ".$key['status'].", ";
-              $jsonString .= "\"site\": ".$key['site'].", ";
-              $jsonString .= "\"type\": ".$key['type'].", ";
-              $jsonString .= "\"pid\": ".$key['pid'].", ";
-              $jsonString .= "\"url\": ".$key['url'];
-              $jsonString .= "},";
+    foreach(Downloader::get_finished_background_jobs() as $key) {
+        $jsonString .= "{ \"file\": ".$key['file'].", ";
+        $jsonString .= "\"status\": ".$key['status'].", ";
+        $jsonString .= "\"site\": ".$key['site'].", ";
+        $jsonString .= "\"type\": ".$key['type'].", ";
+        $jsonString .= "\"pid\": ".$key['pid'].", ";
+        $jsonString .= "\"url\": ".$key['url'];
+        $jsonString .= "},";
     }
     $jsonString = trim($jsonString, ",");
     $jsonString .= "],";
 
     $jsonString .= "\"videos\": [";
-    foreach($videofiles as $f)
-        {
-              $deleteurl = "";
+    foreach($videofiles as $f) {
+        $deleteurl = "";
         if ($config['allowFileDelete']) {
             $deleteurl = '<a data-href="?delete='.urlencode($f["name"]).'&type=v" data-toggle="modal" data-target="#confirm-delete" class="btn btn-danger btn-xs">Delete</a>';
         }
-              $fileurl = $f["name"];
+        $fileurl = $f["name"];
         if ($config['downloadPath'] != "") {
             $fileurl = '<a href="'.$file->get_downloads_link().'/'.$f["name"].'" download>'.$f["name"].'</a>';
         }
-              $jsonString .= "{ \"file\": ".json_encode($fileurl).", ";
-              $jsonString .= "\"size\": ".json_encode($f["size"]).", ";
-              $jsonString .= "\"deleteurl\": ".json_encode($deleteurl);
-              $jsonString .= "},";
+        $jsonString .= "{ \"file\": ".json_encode($fileurl).", ";
+        $jsonString .= "\"size\": ".json_encode($f["size"]).", ";
+        $jsonString .= "\"deleteurl\": ".json_encode($deleteurl);
+        $jsonString .= "},";
     }
             
     $jsonString = trim($jsonString, ",");
     $jsonString .= "],";
+
     $jsonString .= "\"music\": [";
-    foreach($musicfiles as $f)
-        {
-              $deleteurl = "";
+    foreach($musicfiles as $f) {
+        $deleteurl = "";
         if ($config['allowFileDelete']) {
             $deleteurl = '<a data-href="?delete='.urlencode($f["name"]).'&type=m" data-toggle="modal" data-target="#confirm-delete" class="btn btn-danger btn-xs">Delete</a>';
         }
-              $fileurl = $f["name"];
+        $fileurl = $f["name"];
         if ($config['downloadPath'] != "") {
             $fileurl = '<a href="'.$file->get_downloads_link().'/'.$f["name"].'" download>'.$f["name"].'</a>';
         }
-              $jsonString .= "{ \"file\": ".json_encode($fileurl).", ";
-              $jsonString .= "\"size\": ".json_encode($f["size"]).", ";
-              $jsonString .= "\"deleteurl\": ".json_encode($deleteurl);
-              $jsonString .= "},";
+        $jsonString .= "{ \"file\": ".json_encode($fileurl).", ";
+        $jsonString .= "\"size\": ".json_encode($f["size"]).", ";
+        $jsonString .= "\"deleteurl\": ".json_encode($deleteurl);
+        $jsonString .= "},";
     }
     $jsonString = trim($jsonString, ",");
     $jsonString .= "],";
-
 
     $jsonString .= "\"logURL\": ".json_encode($config['logURL'])." }";
     echo $jsonString;
     die();
 }
   
-  // Delete a downloaded file from disk if allowed
+// Delete a downloaded file from disk if allowed
 if(isset($_GET["delete"]) && $config['allowFileDelete']) {
     $file->delete(urldecode($_GET["delete"]));
     if ($_GET["type"] == "m") {
@@ -108,7 +104,7 @@ if(isset($_GET["delete"]) && $config['allowFileDelete']) {
     die();
 }
   
-  // Kill one or all jobs
+// Kill one or all jobs
 if(isset($_GET['kill']) && !empty($_GET['kill'])) {
     if ($_GET['kill'] === "all") {
         Downloader::kill_them_all();
@@ -119,7 +115,7 @@ if(isset($_GET['kill']) && !empty($_GET['kill'])) {
     die();
 }
   
-  // Clear download history
+// Clear download history
 if(isset($_GET['clear']) && !empty($_GET['clear'])) {
     if ($_GET['clear'] === "recent") {
         Downloader::clear_finished();
@@ -130,14 +126,14 @@ if(isset($_GET['clear']) && !empty($_GET['clear'])) {
     die();
 }
   
-  // Restart a job from history
+// Restart a job from history
 if(isset($_GET['restart']) && !empty($_GET['restart'])) {
     Downloader::restart_download($_GET['restart']);
     header("Location: index.php#downloads");
     die();
 }
   
-  // Download a video
+// Download a video
 if(isset($_POST['urls']) && !empty($_POST['urls'])) {
     $get_parms = "?";
     $audio_only = false;
@@ -207,14 +203,14 @@ if (isset($_GET['url'])) {
     }
 }
 
-  // Show success or error if download was triggered through bookmarklet
+// Show success or error if download was triggered through bookmarklet
 if (isset($_GET['submitstatus'])) {
     include_once 'views/page.autosubmit.php';
     unset($_SESSION['errors']);
     die();
 }
   
-  // Prepare for display of web page
+// Prepare for display of web page
 if (@$_GET["audio"]=="true" && !$config['disableExtraction']) {
     $audio_check = " checked=\"checked\"";
     $video_form_style = " style=\"display: none;\"";
@@ -225,28 +221,28 @@ if (@$_GET["audio"]=="true" && !$config['disableExtraction']) {
     $audio_form_style = "style=\"display: none;\"";
 }
 
-  $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-  $uri_parts = explode('?', $_SERVER['REQUEST_URI'], 2);
-  $uri_parts = $uri_parts[0];
-  $uri_parts = explode('#', $uri_parts, 2);
-  $baseuri = $protocol . $_SERVER['HTTP_HOST'] . $uri_parts[0];
-  $bookmarkletvideo = "javascript:(function(){f='".$baseuri."?url='+encodeURIComponent(window.location.href);a=function(){if(!window.open(f))location.href=f};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})()";
-  $bookmarkletmusic = "javascript:(function(){f='".$baseuri."?audio=true&url='+encodeURIComponent(window.location.href);a=function(){if(!window.open(f))location.href=f};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})()";
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+$uri_parts = explode('?', $_SERVER['REQUEST_URI'], 2);
+$uri_parts = $uri_parts[0];
+$uri_parts = explode('#', $uri_parts, 2);
+$baseuri = $protocol . $_SERVER['HTTP_HOST'] . $uri_parts[0];
+$bookmarkletvideo = "javascript:(function(){f='".$baseuri."?url='+encodeURIComponent(window.location.href);a=function(){if(!window.open(f))location.href=f};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})()";
+$bookmarkletmusic = "javascript:(function(){f='".$baseuri."?audio=true&url='+encodeURIComponent(window.location.href);a=function(){if(!window.open(f))location.href=f};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})()";
 
-  // Show header
-  require_once 'views/part.header.php';
+// Show header
+require_once 'views/part.header.php';
   
-  // Add Custom bookmarklet popup
-  require_once 'views/popup.bookmarklet.php';
+// Add Custom bookmarklet popup
+require_once 'views/popup.bookmarklet.php';
 
-  // Add confirm popup
-  require_once 'views/popup.confirm.php';
+// Add confirm popup
+require_once 'views/popup.confirm.php';
   
-  // Main part of website
-  require_once 'views/part.main.php';
+// Main part of website
+require_once 'views/part.main.php';
 
-  // Show footer with help panel
-  require_once 'views/part.footer.php';
+// Show footer with help panel
+require_once 'views/part.footer.php';
 
-  unset($_SESSION['errors']);
+unset($_SESSION['errors']);
 ?>
