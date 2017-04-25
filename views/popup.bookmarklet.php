@@ -16,6 +16,7 @@
         <label id="bml_audio_group" style="display: none;">
           Audio Format:
           <select style="width: 75px;" name="bml_audio_format" id="bml_audio_format" onchange="updateBookmarklet();">
+            <option value="mp3-high" selected="selected">mp3-high</option>
             <option value="mp3" selected="selected">mp3</option>
             <option value="aac">aac</option>
             <option value="vorbis">vorbis</option>

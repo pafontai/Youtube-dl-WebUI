@@ -150,7 +150,11 @@ if(isset($_POST['urls']) && !empty($_POST['urls'])) {
     }
     
     if(isset($_POST['audio_format']) && !empty($_POST['audio_format'])) {
-        $audio_format = "--audio-format " . $_POST['audio_format'] . " --audio-quality 0";
+        if($_POST['audio_format'] === "mp3-high") {
+            $audio_format = "--audio-format mp3 --audio-quality 0";
+        } else {
+            $audio_format = "--audio-format " . $_POST['audio_format'];
+        }
         $get_parms .= "audio_format=".$_POST['audio_format']."&";
     }
     
@@ -167,8 +171,8 @@ if(isset($_POST['urls']) && !empty($_POST['urls'])) {
     }
 }
   
-  // Download or autopopulate from bookmarklet
-  $urlvalue = "";
+// Download or autopopulate from bookmarklet
+$urlvalue = "";
 if (isset($_GET['url'])) {
     $urlvalue = " value=\"".urldecode($_GET['url'])."\"";
     if (isset($_GET['auto_submit'])) {
@@ -181,7 +185,11 @@ if (isset($_GET['url'])) {
         }
       
         if(isset($_GET['audio_format']) && !empty($_GET['audio_format'])) {
-            $audio_format = "--audio-format " . $_GET['audio_format'] . " --audio-quality 0";
+            if($_POST['audio_format'] === "mp3-high") {
+                $audio_format = "--audio-format mp3 --audio-quality 0";
+            } else {
+                $audio_format = "--audio-format " . $_POST['audio_format'];
+            }
         }
     
         if(isset($_GET['format']) && !empty($_GET['format'])) {

@@ -31,6 +31,7 @@
                 <label id="audio_group"<?php echo($audio_form_style); ?>>
                   Audio Format:
                   <select style="width: 75px;" name="audio_format" id="audio_format">
+                    <option value="mp3-high"<?php echo($_GET["audio_format"]=="mp3-high" ? " selected=\"selected\"" : ""); ?>>mp3 High Quality</option>
                     <option value="mp3"<?php echo($_GET["audio_format"]=="mp3" ? " selected=\"selected\"" : ""); ?>>mp3</option>
                     <option value="aac"<?php echo($_GET["audio_format"]=="aac" ? " selected=\"selected\"" : ""); ?>>aac</option>
                     <option value="vorbis"<?php echo($_GET["audio_format"]=="vorbis" ? " selected=\"selected\"" : ""); ?>>vorbis</option>
