@@ -95,7 +95,7 @@ if(isset($_GET['jobs'])) {
   
 // Delete a downloaded file from disk if allowed
 if(isset($_GET["delete"]) && $config['allowFileDelete']) {
-    $file->delete(urldecode($_GET["delete"]));
+    $file->delete($_GET["delete"]);
     if ($_GET["type"] == "m") {
         header("Location: index.php#music");
     } else {
