@@ -21,8 +21,7 @@ class Downloader
             return;
         }
       
-        foreach ($this->urls as $url)
-               {
+        foreach ($this->urls as $url) {
             if(!$this->is_valid_url($url)) {
                 $this->errors[] = "\"".$url."\" is not a valid url !";
             }
@@ -39,9 +38,7 @@ class Downloader
         elseif($this->config["max_dl"] > 0) {
             if($this->background_jobs() >= 0 && $this->background_jobs() < $this->config["max_dl"]) {
                 $this->do_download();
-            }
-            else
-            {
+            } else {
                 $this->errors[] = "Simultaneous downloads limit reached !";
             }
         }
@@ -269,8 +266,7 @@ class Downloader
     
     public static function kill_them_all()
     {
-        foreach(glob($GLOBALS['config']['logPath'].'/pid_*') as $file)
-        {
+        foreach(glob($GLOBALS['config']['logPath'].'/pid_*') as $file) {
             $jobfile = $str_replace("pid_", "job_", $file);
             $pos = strrpos($jobfile, "job_");
             $completed = substr_replace($jobfile, "ytdl_", $pos, strlen("job_"))."_cancelled";
@@ -289,16 +285,14 @@ class Downloader
             return;
         }
       
-        foreach($output as $p)
-        {
+        foreach($output as $p) {
             shell_exec("kill ".$p);
         }
       
         $folder = $GLOBALS['config']['outputFolder'];
       
         if (!$GLOBALS['config']['keepPartialFiles']) {
-            foreach(glob($folder.'/*.part') as $file)
-            {
+            foreach(glob($folder.'/*.part') as $file) {
                 unlink($file);
             }
         }
@@ -348,8 +342,7 @@ class Downloader
     
     public static function clear_finished()
     {
-        foreach(glob($GLOBALS['config']['logPath'].'/ytdl_*') as $file)
-        {
+        foreach(glob($GLOBALS['config']['logPath'].'/ytdl_*') as $file) {
             unlink($file);
         }
     }
@@ -378,9 +371,7 @@ class Downloader
             if(!mkdir($this->download_path, 0775)) {
                 $this->errors[] = "Output folder doesn't exist and creation failed !";
             }
-        }
-        else
-        {
+        } else {
             //Exists but can I write ?
             if(!is_writable($this->download_path)) {
                 $this->errors[] = "Output folder isn't writable !";
@@ -412,10 +403,9 @@ class Downloader
         $fno = $this->getUniqueFileName("job_", $suffix, $this->config['logPath']."/");
         $fnp = str_replace("job_", "pid_", $fno);
         $urltext = "";
-        foreach($this->urls as $url)
-              {
-                $cmd .= " ".escapeshellarg($url);
-                $urltext .= $url .",";
+        foreach($this->urls as $url) {
+            $cmd .= " ".escapeshellarg($url);
+            $urltext .= $url .",";
         }
         $urltext = trim($urltext, ",");
         $cmd .= " --restrict-filenames"; // --restrict-filenames is for specials chars
@@ -427,4 +417,4 @@ class Downloader
         file_put_contents($this->config['logPath']."/".$fnp, $urltext."\n", FILE_APPEND);
     }
 }
-    ?>
+?>

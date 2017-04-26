@@ -2,7 +2,7 @@
 
 class FileHandler
 {
-    private $videos_ext = ".{avi,mp4,flv,webm}";
+    private $videos_ext = ".{avi,mp4,flv,webm,3gp}";
     private $musics_ext = ".{mp3,ogg,m4a}";
     private $config = [];
 
@@ -43,8 +43,7 @@ class FileHandler
 
         $folder = $this->get_downloads_folder().'/';
 
-        foreach(glob($folder.'*'.$this->musics_ext, GLOB_BRACE) as $file)
-        {
+        foreach(glob($folder.'*'.$this->musics_ext, GLOB_BRACE) as $file) {
             $music = [];
             $music["name"] = str_replace($folder, "", $file);
             $music["size"] = $this->to_human_filesize(filesize($file));
@@ -91,7 +90,7 @@ class FileHandler
 
     public function get_downloads_folder()
     {
-          $path = $this->config["outputFolder"];
+        $path = $this->config["outputFolder"];
         if(strpos($path, "/") !== 0) {
             $path = dirname(__DIR__).'/' . $path;
         }
@@ -100,7 +99,7 @@ class FileHandler
 
     public function get_downloads_link()
     {
-          $path = $this->config["downloadPath"];
+        $path = $this->config["downloadPath"];
         return $path;
     }
 }
