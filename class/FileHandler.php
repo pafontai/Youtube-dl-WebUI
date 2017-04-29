@@ -47,7 +47,6 @@ class FileHandler
 
         $folder = $this->get_downloads_folder().'/';
 
-<<<<<<< HEAD
         $dir_handle=opendir($folder);
         while ($file = readdir($dir_handle)) {
             if ($file != "." && $file != "..") {
@@ -59,14 +58,6 @@ class FileHandler
                     $musics[] = $music;
                 }
             }
-=======
-        foreach(glob($folder.'*'.$this->musics_ext, GLOB_BRACE) as $file) {
-            $music = [];
-            $music["name"] = str_replace($folder, "", $file);
-            $music["size"] = $this->to_human_filesize(filesize($file));
-            
-            $musics[] = $music;
->>>>>>> f9f1ef60f04fd1ab4c31efab45491c64483d22ce
         }
         closedir($dir_handle);
 
