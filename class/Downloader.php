@@ -5,7 +5,8 @@ class Downloader
     private $audio_only = false;
     private $errors = [];
     private $download_path = "";
-    private $dl_format = "-f best";
+    //private $dl_format = "-f best";
+    private $dl_format = "";
     private $config = [];
     
     public function __construct($post, $audio_only, $dl_format, $audio_format)

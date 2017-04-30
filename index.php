@@ -138,7 +138,8 @@ if(isset($_POST['urls']) && !empty($_POST['urls'])) {
     $get_parms = "?";
     $audio_only = false;
     $audio_format = "--audio-format mp3 --audio-quality 0";
-    $dl_format = "-f best";
+    //$dl_format = "-f best";
+    $dl_format = "";
     
     if(isset($_POST['audio']) && !empty($_POST['audio'])) {
         $audio_only = true;
@@ -173,7 +174,8 @@ if (isset($_GET['url'])) {
     $urlvalue = " value=\"".urldecode($_GET['url'])."\"";
     if (isset($_GET['auto_submit'])) {
         $audio_format = "--audio-format mp3 --audio-quality 0";
-        $dl_format = "-f best";
+        //$dl_format = "-f best";
+        $dl_format = "";
         if (isset($_GET["audio"]) && $_GET["audio"] == "true") {
             $audio_only = true;
         } else {
