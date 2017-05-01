@@ -156,8 +156,10 @@ if(isset($_POST['urls']) && !empty($_POST['urls'])) {
     }
     
     if(isset($_POST['format']) && !empty($_POST['format'])) {
-        $dl_format = "-f " . $_POST['format'];
-        $get_parms .= "format=".$_POST['format']."&";
+        if($_POST['format'] != "best") {
+            $dl_format = "-f " . $_POST['format'];
+            $get_parms .= "format=".$_POST['format']."&";
+        }
     }
     
     $downloader = new Downloader($_POST['urls'], $audio_only, $dl_format, $audio_format);
