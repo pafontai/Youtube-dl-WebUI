@@ -2,7 +2,7 @@
 
 class FileHandler
 {
-    private $videos_ext = "avi|mp4|flv|webm|3gp";
+    private $videos_ext = "avi|mp4|flv|webm|3gp|mkv";
     private $musics_ext = "mp3|ogg|m4a";
     private $config = [];
 
