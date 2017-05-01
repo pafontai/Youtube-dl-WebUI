@@ -187,6 +187,7 @@ class Downloader
                     $isaudio = true;
                 }
                 if ($handle) {
+                    $jobstatus = "Completed";
                     while (($line = fgets($handle)) !== false) {
                         if (strpos($line, '[download] Downloading') !== false) {
                             $listpos = substr($line, 29);
@@ -210,13 +211,18 @@ class Downloader
                             $pos = strrpos($line, '/');
                             $filename = $pos === false ? $line : substr($line, $pos + 1);
                         }
+                        if (strpos($line, 'has already been downloaded') !==false) {
+                            $posEnd   = strpos($line, 'has already been downloaded');
+                            $posStart = strrpos($line, '/');
+                            $filename = $posStart === false ? $line : substr($line, $posStart + 1, $posEnd - 22);
+                            $jobstatus = "Cancelled (Already Downloaded)";
+                        }
                     }
                     fclose($handle);
                     $type = "video";
                     if ($isaudio) {
                         $type = "audio";
                     }
-                    $jobstatus = "Completed";
                     if (strpos($fileinfo->getFilename(), "_cancelled")!==false) {
                         $jobstatus = "Cancelled";
                     }
