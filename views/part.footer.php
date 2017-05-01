@@ -31,6 +31,7 @@
             </td>
             <td>
               Simply paste your video link(s) into the URL field, select the quality or audio format and click "Download". You can also drag the following links to your bookmarks bar and simply click on the bookmark while watching the video you want to download.<br />
+              For multiple URL in one paste, URL must be separated by a double pipe: URL1||URL2||URL3<br />
               <a href="<?php echo($bookmarkletvideo); ?>" class="btn btn-default btn-xs">Download Video</a>, <a href="<?php echo($bookmarkletmusic); ?>" class="btn btn-default btn-xs">Download Audio</a> or 
               <button data-toggle="modal" data-target="#custom_bookmarklet" class="btn btn-default btn-xs">Click here to create a custom bookmarklet</button></td>
             </td>
