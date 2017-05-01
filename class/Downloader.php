@@ -16,7 +16,7 @@ class Downloader
         $this->audio_only = $audio_only;
         $this->audio_format = $audio_format;
         $this->dl_format = $dl_format;
-        $this->urls = explode(",", $post);
+        $this->urls = explode("||", $post);  //Each url separated by a double pipe sign
       
         if(!$this->check_requirements($audio_only)) {
             return;
