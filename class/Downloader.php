@@ -18,7 +18,7 @@ class Downloader
       
         if (count($dl_list) > 0) {
             foreach($dl_list as $onedownload) {
-                foreach(explode(',', $onedownload['url']) as $url) {
+                foreach(explode('||', $onedownload['url']) as $url) {
             if(!$this->is_valid_url($url)) {
                 $this->errors[] = "\"".$url."\" is not a valid url !";
             }
@@ -171,16 +171,16 @@ class Downloader
                 $url = substr($line, strpos($line,"=")+1);
                 $pid = substr($line, 0, strpos($line,"="));
                 $audio_only = true;
-                if (!explode("|", $url)[2] || trim(explode("|", $url)[2]) === "") {
+                if (!explode(">", $url)[2] || trim(explode(">", $url)[2]) === "") {
                     $audio_only = false;
                 }
                 
                 $qjs[] = array(
                 'pid' => json_encode($pid),
-                'url' => json_encode(explode("|", $url)[0]),
-                'dl_format' => json_encode(explode("|", $url)[1]),
+                'url' => json_encode(explode(">", $url)[0]),
+                'dl_format' => json_encode(explode(">", $url)[1]),
                 'audio_only' => $audio_only,
-                'audio_format' => json_encode(explode("|", $url)[3])
+                'audio_format' => json_encode(explode(">", $url)[3])
                 );
             }
         }
@@ -212,6 +212,7 @@ class Downloader
                     $isaudio = true;
                 }
                 if ($handle) {
+                    $jobstatus = "Completed";
                     while (($line = fgets($handle)) !== false) {
                         if (strpos($line, '[download] Downloading') !== false) {
                             $listpos = substr($line, 29);
@@ -235,13 +236,18 @@ class Downloader
                             $pos = strrpos($line, '/');
                             $filename = $pos === false ? $line : substr($line, $pos + 1);
                         }
+                        if (strpos($line, 'has already been downloaded') !==false) {
+                            $posEnd   = strpos($line, 'has already been downloaded');
+                            $posStart = strrpos($line, '/');
+                            $filename = $posStart === false ? $line : substr($line, $posStart + 1, $posEnd - 22);
+                            $jobstatus = "Cancelled (Already Downloaded)";
+                        }
                     }
                     fclose($handle);
                     $type = "video";
                     if ($isaudio) {
                         $type = "audio";
                     }
-                    $jobstatus = "Completed";
                     if (strpos($fileinfo->getFilename(), "_cancelled")!==false) {
                         $jobstatus = "Cancelled";
                     }
@@ -451,7 +457,7 @@ class Downloader
         $fno = $this->getUniqueFileName("job_", $suffix, $this->config['logPath']."/");
         $fnp = str_replace("job_", "pid_", $fno);
         $urltext = "";
-        foreach(explode(",", $onedownload['url']) as $url) {
+        foreach(explode("||", $onedownload['url']) as $url) {
             $cmd .= " ".escapeshellarg($url);
             $urltext .= $url .",";
         }
@@ -488,15 +494,15 @@ class Downloader
                     break;
                 }
                 $url = substr($line, strpos($line,"=")+1);
-                if (!$this->is_valid_url(explode("|", $url)[0])) {
+                if (!$this->is_valid_url(explode(">", $url)[0])) {
                     $this->errors[] = $url." is not a valid URL and was removed from the queue.";
                 } else {
                     if ($currently_running >= 0 && $currently_running < $this->config["max_dl"]) {
                         $this->dl_list[] =  array(
-                        'url' => explode("|", $url)[0],
-                        'dl_format' => explode("|", $url)[1],
-                        'audio_only' => explode("|", $url)[2],
-                        'audio_format' => explode("|", $url)[3]
+                        'url' => explode(">", $url)[0],
+                        'dl_format' => explode(">", $url)[1],
+                        'audio_only' => explode(">", $url)[2],
+                        'audio_format' => explode(">", $url)[3]
                         );
                         $currently_running++;
                     } else {
@@ -524,7 +530,7 @@ class Downloader
     public function addToQueue($onedownload)
     {
         $queue_file = $this->config['logPath']."/dl_queue";
-        $fcontent = "queueid".uniqid()."=".$onedownload['url']."|".$onedownload['dl_format']."|".$onedownload['audio_only']."|".$onedownload['audio_format']."\n";
+        $fcontent = "queueid".uniqid()."=".$onedownload['url'].">".$onedownload['dl_format'].">".$onedownload['audio_only'].">".$onedownload['audio_format']."\n";
         if (file_exists($queue_file)) {
             file_put_contents($queue_file, $fcontent, FILE_APPEND | LOCK_EX);
         } else {
