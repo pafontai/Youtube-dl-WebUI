@@ -111,6 +111,25 @@ return array(
   'youtubedlExe' => '/usr/bin/youtube-dl',
 
   /**
+   * Specify additional parameters for the youtube-dl command
+   * For example to specify a cache dir location
+   * the following parameters include extracted metadata into the downloaded
+   * video or music and it specifies a cache dir location writable for youtube-dl
+   *
+   * 'youtubedlParameters' => '--add-metadata  --cache-dir /var/www/html/youtube-dl-webui/tmp'
+   */
+  'youtubedlParameters' => '',
+
+  /**
+   * Specify the encoding orf the process context for youtube-dl. It's necessary 
+   * to manage accented caracters into metadata. The example allows to extract accented
+   * caracters as UTF-8 in a French context.
+   *
+   * 'encoding' => '/usr/bin/youtube-dl'
+   */
+  'encoding' => 'C',
+
+  /**
    * Specify if .part files should be kept when cliking on Stop All on
    * the download status page.
    *
