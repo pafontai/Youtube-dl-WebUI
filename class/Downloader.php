@@ -464,8 +464,14 @@ class Downloader
         $urltext = trim($urltext, ",");
         $cmd .= " --restrict-filenames"; // --restrict-filenames is for specials chars
         $cmd .= " --ignore-errors";
+        $cmd .= " ".$this->config["youteubedlParameters"];        
         $logcmd = $cmd;
         $cmd .= " > ".$this->config['logPath']."/".$fno." & echo $! > ".$this->config['logPath']."/".$fnp;
+
+        // setting locale encoding to allow accented caracters into metadata
+        $locale = $this->config['encoding'];
+        setlocale(LC_ALL, $locale);
+        putenv('LC_ALL='.$locale);
         passthru($cmd);
         file_put_contents($this->config['logPath']."/".$fnp, $logcmd."\n", FILE_APPEND);
         file_put_contents($this->config['logPath']."/".$fnp, $urltext."\n", FILE_APPEND);
