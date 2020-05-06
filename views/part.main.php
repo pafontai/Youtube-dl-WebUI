@@ -132,7 +132,8 @@
     <div class="tab-pane fade" id="videos">
       <br /><br />
       <h4 style="text-align: center;">Downloaded Videos</h4>
-      <table style="text-align: left;" class="table table-striped table-hover ">
+      <input class="form-control input-sm" id="searchDownloadedVideos" type="text" placeholder="Search...">
+      <table style="text-align: left;" class="table table-striped table-hover " id="tableDownloadedVideos">
         <thead>
           <tr>
             <th style="min-width:800px; height:35px">File</th>
@@ -156,7 +157,8 @@
     <div class="tab-pane fade" id="music">
       <br /><br />
       <h4 style="text-align: center;">Downloaded Music</h4>
-      <table style="text-align: left;" class="table table-striped table-hover ">
+      <input class="form-control input-sm" id="searchDownloadedMusic" type="text" placeholder="Search...">
+      <table style="text-align: left;" class="table table-striped table-hover " id="tableDownloadedMusic">
         <thead>
           <tr>
             <th style="min-width:800px; height:35px">File</th>
@@ -189,5 +191,20 @@
 
   var hash = window.location.hash;
   $('#mainnav a[href="' + hash + '"]').tab('show');
+
+  $("#searchDownloadedMusic").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#tableDownloadedMusic tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+
+  $("#searchDownloadedVideos").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#tableDownloadedVideos tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+
 </script>
  

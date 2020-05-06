@@ -155,6 +155,7 @@ function loadList()
                     htmlString.push("</tr>");
                 }
                 $('#videofiles').html(htmlString.join("\n"));
+                $('#searchDownloadedVideos').keyup();
             }
     
             var arrayLength = data.music.length;
@@ -171,6 +172,7 @@ function loadList()
                     htmlString.push("</tr>");
                 }
                 $('#musicfiles').html(htmlString.join("\n"));
+                $('#searchDownloadedMusic').keyup();
             }
         }, "json"
     );
